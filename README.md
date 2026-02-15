@@ -18,52 +18,14 @@ ARC automatically detects NaN/Inf losses, gradient explosions, OOM errors, and s
 | **vs torchft**     | 3/3 vs 1/3 recoveries |
 | **Max Model Size** | 1.5B params           |
 
-## 🚀 Quick Start
-
-### Installation
-
-```bash
-pip install arc-training
-```
-
-### Basic Usage (3 lines!)
-
-```python
-from arc import WeightRollback
-
-# Initialize
-arc = WeightRollback(model, optimizer)
-
-# Training loop
-for batch in dataloader:
-    loss = model(batch)
-
-    # ARC handles everything
-    action = arc.step(loss)
-
-    if not action.rolled_back:
-        loss.backward()
-        optimizer.step()
-```
-
-### Lightning Integration
-
-```python
-from arc.integrations import ARCCallback
-
-trainer = pl.Trainer(
-    callbacks=[ARCCallback()]
-)
-```
-
-## 📊 Configurations
+## Configurations
 
 | Config       | Overhead | Use Case                |
 | ------------ | -------- | ----------------------- |
 | **ARC Lite** | 27%      | Production training     |
 | ARC Full     | 44%      | Debugging unstable runs |
 
-## 🛡️ What ARC Handles
+## What ARC Handles
 
 | Failure Type       | Detection | Recovery | Status         |
 | ------------------ | --------- | -------- | -------------- |
@@ -74,7 +36,7 @@ trainer = pl.Trainer(
 | Accuracy Collapse  | ✅        | ⚠️       | Detection only |
 | Mode Collapse      | ✅        | ⚠️       | Detection only |
 
-## 📈 Benchmarks
+## Benchmarks
 
 ```
 Recovery Rate: 100% (160/160 induced failures)
@@ -82,13 +44,13 @@ Statistical Significance: p < 0.001
 Models Tested: CNN, ViT, Transformer, Diffusion (up to 1.5B params)
 ```
 
-## 🔗 Links
+## Links
 
 - [Documentation](https://arc-training.readthedocs.io)
 - [Paper](link-to-paper)
 - [Efficiency Report](ARC_EFFICIENCY_REPORT.md)
 
-## 📜 Citation
+## Citation
 
 ```bibtex
 @software{arc2026,
