@@ -1,0 +1,43 @@
+{
+  "threshold_sensitivity": [
+    {
+      "threshold": 10.0,
+      "fp_rate_mean": 0.0,
+      "fp_rate_std": 0.0
+    },
+    {
+      "threshold": 25.0,
+      "fp_rate_mean": 0.0,
+      "fp_rate_std": 0.0
+    },
+    {
+      "threshold": 50.0,
+      "fp_rate_mean": 0.0,
+      "fp_rate_std": 0.0
+    },
+    {
+      "threshold": 100.0,
+      "fp_rate_mean": 0.0,
+      "fp_rate_std": 0.0
+    },
+    {
+      "threshold": 200.0,
+      "fp_rate_mean": 0.0,
+      "fp_rate_std": 0.0
+    },
+    {
+      "threshold": 500.0,
+      "fp_rate_mean": 0.0,
+      "fp_rate_std": 0.0
+    }
+  ],
+  "precision_recall": {
+    "tp": 3,
+    "fp": 0,
+    "tn": 197,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0
+  }
+}

@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Data (do NOT commit datasets)
+data/
+*.tar.gz
+*.zip
+
+# Model weights (do NOT commit trained weights)
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+checkpoints/
+weights/
+saved_models/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs and temp
+*.log
+tmp/
+temp/
+
+# Benchmark output directories
+experiments/benchmark_*/
+
+# Jupyter
+.ipynb_checkpoints/

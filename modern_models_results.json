@@ -1,0 +1,208 @@
+[
+  {
+    "model": "YOLOv11",
+    "failure_type": "catastrophic_lr",
+    "baseline": {
+      "model": "YOLOv11",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        4.38708345413208,
+        436260.71840278624,
+        21.155088577270508
+      ],
+      "rollbacks": 0
+    },
+    "protected": {
+      "model": "YOLOv11",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        4.380179824829102,
+        4.0981762409210205,
+        4.098514242172241
+      ],
+      "rollbacks": 1
+    },
+    "arc_saved": false
+  },
+  {
+    "model": "YOLOv11",
+    "failure_type": "loss_singularity",
+    "baseline": {
+      "model": "YOLOv11",
+      "epochs_completed": 1,
+      "failed": true,
+      "losses": [
+        4.385458164215088
+      ],
+      "rollbacks": 0
+    },
+    "protected": {
+      "model": "YOLOv11",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        4.372752151489258,
+        4.085153053204219,
+        4.072725772857666
+      ],
+      "rollbacks": 1
+    },
+    "arc_saved": true
+  },
+  {
+    "model": "DINOv2-Small",
+    "failure_type": "catastrophic_lr",
+    "baseline": {
+      "model": "DINOv2-Small",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        7.033719730377197,
+        76754.6448586464,
+        18719.79078125
+      ],
+      "rollbacks": 0
+    },
+    "protected": {
+      "model": "DINOv2-Small",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        7.214381446838379,
+        6.222425758838654,
+        6.232358684539795
+      ],
+      "rollbacks": 1
+    },
+    "arc_saved": false
+  },
+  {
+    "model": "DINOv2-Small",
+    "failure_type": "loss_singularity",
+    "baseline": {
+      "model": "DINOv2-Small",
+      "epochs_completed": 1,
+      "failed": true,
+      "losses": [
+        7.103589248657227
+      ],
+      "rollbacks": 0
+    },
+    "protected": {
+      "model": "DINOv2-Small",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        7.111823196411133,
+        6.029379149278005,
+        5.971423778533936
+      ],
+      "rollbacks": 1
+    },
+    "arc_saved": true
+  },
+  {
+    "model": "Llama-Style",
+    "failure_type": "catastrophic_lr",
+    "baseline": {
+      "model": "Llama-Style",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        0.0,
+        4.991888431504776e-09,
+        40252.90570159916
+      ],
+      "rollbacks": 0
+    },
+    "protected": {
+      "model": "Llama-Style",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        0.0,
+        4.991888431504776e-09,
+        84.2333919513718
+      ],
+      "rollbacks": 1
+    },
+    "arc_saved": false
+  },
+  {
+    "model": "Llama-Style",
+    "failure_type": "loss_singularity",
+    "baseline": {
+      "model": "Llama-Style",
+      "epochs_completed": 1,
+      "failed": true,
+      "losses": [
+        0.0
+      ],
+      "rollbacks": 0
+    },
+    "protected": {
+      "model": "Llama-Style",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rollbacks": 1
+    },
+    "arc_saved": true
+  },
+  {
+    "model": "SD-UNet",
+    "failure_type": "catastrophic_lr",
+    "baseline": {
+      "model": "SD-UNet",
+      "epochs_completed": 1,
+      "failed": true,
+      "losses": [
+        1.0344714307785035
+      ],
+      "rollbacks": 0
+    },
+    "protected": {
+      "model": "SD-UNet",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        1.0296594977378846,
+        1.0047400544087093,
+        1.00250892162323
+      ],
+      "rollbacks": 1
+    },
+    "arc_saved": true
+  },
+  {
+    "model": "SD-UNet",
+    "failure_type": "loss_singularity",
+    "baseline": {
+      "model": "SD-UNet",
+      "epochs_completed": 1,
+      "failed": true,
+      "losses": [
+        1.0302898049354554
+      ],
+      "rollbacks": 0
+    },
+    "protected": {
+      "model": "SD-UNet",
+      "epochs_completed": 3,
+      "failed": false,
+      "losses": [
+        1.0308366107940674,
+        1.0030924752354622,
+        1.0040571188926697
+      ],
+      "rollbacks": 1
+    },
+    "arc_saved": true
+  }
+]

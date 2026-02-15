@@ -1,0 +1,126 @@
+[
+  {
+    "size": "small",
+    "baseline": {
+      "model_size": "small",
+      "n_params": 60042,
+      "model_bytes_mb": 0.240168,
+      "use_arc": false,
+      "total_time_s": 0.3053426742553711,
+      "steps": 100,
+      "avg_step_time_ms": 2.6668405532836914,
+      "std_step_time_ms": 1.1421241236511182,
+      "mem_model_mb": 76.4928,
+      "mem_arc_overhead_mb": 0,
+      "mem_peak_mb": 81.760256
+    },
+    "arc": {
+      "model_size": "small",
+      "n_params": 60042,
+      "model_bytes_mb": 0.240168,
+      "use_arc": true,
+      "total_time_s": 0.41073012351989746,
+      "steps": 100,
+      "avg_step_time_ms": 3.834531307220459,
+      "std_step_time_ms": 1.1514429336650414,
+      "mem_model_mb": 0.004096,
+      "mem_arc_overhead_mb": 0.032768,
+      "mem_peak_mb": 3.698688
+    },
+    "time_overhead_pct": 34.5144842664168,
+    "mem_overhead_pct": -95.47617854816892
+  },
+  {
+    "size": "medium",
+    "baseline": {
+      "model_size": "medium",
+      "n_params": 844810,
+      "model_bytes_mb": 3.37924,
+      "use_arc": false,
+      "total_time_s": 0.6136586666107178,
+      "steps": 100,
+      "avg_step_time_ms": 5.814158916473389,
+      "std_step_time_ms": 1.1848822798095913,
+      "mem_model_mb": 2.670592,
+      "mem_arc_overhead_mb": 0,
+      "mem_peak_mb": 17.555456
+    },
+    "arc": {
+      "model_size": "medium",
+      "n_params": 844810,
+      "model_bytes_mb": 3.37924,
+      "use_arc": true,
+      "total_time_s": 1.2407450675964355,
+      "steps": 100,
+      "avg_step_time_ms": 12.115211486816406,
+      "std_step_time_ms": 1.1001982233526433,
+      "mem_model_mb": 0.0,
+      "mem_arc_overhead_mb": 0.0,
+      "mem_peak_mb": 17.375232
+    },
+    "time_overhead_pct": 102.18814385025512,
+    "mem_overhead_pct": -1.0265982267848757
+  },
+  {
+    "size": "large",
+    "baseline": {
+      "model_size": "large",
+      "n_params": 8507402,
+      "model_bytes_mb": 34.029608,
+      "use_arc": false,
+      "total_time_s": 3.303861379623413,
+      "steps": 100,
+      "avg_step_time_ms": 32.71353483200073,
+      "std_step_time_ms": 3.5752362048727298,
+      "mem_model_mb": 15.101952,
+      "mem_arc_overhead_mb": 0,
+      "mem_peak_mb": 153.112576
+    },
+    "arc": {
+      "model_size": "large",
+      "n_params": 8507402,
+      "model_bytes_mb": 34.029608,
+      "use_arc": true,
+      "total_time_s": 6.365895986557007,
+      "steps": 100,
+      "avg_step_time_ms": 63.84455073963512,
+      "std_step_time_ms": 5.928706246861954,
+      "mem_model_mb": 9.240576,
+      "mem_arc_overhead_mb": 12.570624,
+      "mem_peak_mb": 400.97792
+    },
+    "time_overhead_pct": 92.68048065874412,
+    "mem_overhead_pct": 161.88437976512134
+  },
+  {
+    "size": "xlarge",
+    "baseline": {
+      "model_size": "xlarge",
+      "n_params": 33792010,
+      "model_bytes_mb": 135.16804,
+      "use_arc": false,
+      "total_time_s": 12.945475578308105,
+      "steps": 100,
+      "avg_step_time_ms": 129.16522979736328,
+      "std_step_time_ms": 6.953387996499039,
+      "mem_model_mb": 5.042176,
+      "mem_arc_overhead_mb": 0,
+      "mem_peak_mb": 189.968384
+    },
+    "arc": {
+      "model_size": "xlarge",
+      "n_params": 33792010,
+      "model_bytes_mb": 135.16804,
+      "use_arc": true,
+      "total_time_s": 24.75211191177368,
+      "steps": 100,
+      "avg_step_time_ms": 249.51747932819404,
+      "std_step_time_ms": 24.68554491642578,
+      "mem_model_mb": 0.065536,
+      "mem_arc_overhead_mb": 0.065536,
+      "mem_peak_mb": 1327.796224
+    },
+    "time_overhead_pct": 91.20280102531876,
+    "mem_overhead_pct": 598.956424243731
+  }
+]

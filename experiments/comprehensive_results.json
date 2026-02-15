@@ -1,0 +1,323 @@
+{
+  "summary": {
+    "total": 38,
+    "baseline_crashes": 13,
+    "arc_survived": 13,
+    "rate": 1.0,
+    "categories": {
+      "NUMERICAL": {
+        "total": 7,
+        "crashed": 3,
+        "survived": 3
+      },
+      "GRADIENT": {
+        "total": 5,
+        "crashed": 0,
+        "survived": 0
+      },
+      "WEIGHT": {
+        "total": 7,
+        "crashed": 3,
+        "survived": 3
+      },
+      "OPTIMIZER": {
+        "total": 4,
+        "crashed": 3,
+        "survived": 3
+      },
+      "LOSS": {
+        "total": 4,
+        "crashed": 0,
+        "survived": 0
+      },
+      "PRECISION": {
+        "total": 3,
+        "crashed": 1,
+        "survived": 1
+      },
+      "ARCHITECTURE": {
+        "total": 3,
+        "crashed": 0,
+        "survived": 0
+      },
+      "DYNAMICS": {
+        "total": 2,
+        "crashed": 0,
+        "survived": 0
+      },
+      "COMBINED": {
+        "total": 3,
+        "crashed": 3,
+        "survived": 3
+      }
+    }
+  },
+  "tests": [
+    {
+      "name": "NaN Loss",
+      "category": "NUMERICAL",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Infinity Loss",
+      "category": "NUMERICAL",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Negative Infinity Loss",
+      "category": "NUMERICAL",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "NaN Weights",
+      "category": "NUMERICAL",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Infinity Weights",
+      "category": "NUMERICAL",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Underflow",
+      "category": "NUMERICAL",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Overflow",
+      "category": "NUMERICAL",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 3
+    },
+    {
+      "name": "Exploding Gradients (1e10)",
+      "category": "GRADIENT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Vanishing Gradients (1e-40)",
+      "category": "GRADIENT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "NaN Gradients",
+      "category": "GRADIENT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Random Gradient Corruption",
+      "category": "GRADIENT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Gradient Sign Flip (1e6)",
+      "category": "GRADIENT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Zero All Weights",
+      "category": "WEIGHT",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Random Weight Corruption",
+      "category": "WEIGHT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 3
+    },
+    {
+      "name": "Weight Explosion (1000x)",
+      "category": "WEIGHT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 6
+    },
+    {
+      "name": "Weight Collapse (0.001x)",
+      "category": "WEIGHT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Sparse Weights (80% zeros)",
+      "category": "WEIGHT",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Constant Weights",
+      "category": "WEIGHT",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Layer Zero (fc1)",
+      "category": "WEIGHT",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Corrupt Momentum Buffers",
+      "category": "OPTIMIZER",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 3
+    },
+    {
+      "name": "Extreme Learning Rate (1e6)",
+      "category": "OPTIMIZER",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Negative Learning Rate",
+      "category": "OPTIMIZER",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Corrupt All Optimizer State",
+      "category": "OPTIMIZER",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 3
+    },
+    {
+      "name": "Loss Explosion (1e15)",
+      "category": "LOSS",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Loss Oscillation",
+      "category": "LOSS",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Negative Loss",
+      "category": "LOSS",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Zero Loss",
+      "category": "LOSS",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "FP16 Overflow",
+      "category": "PRECISION",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 11
+    },
+    {
+      "name": "FP16 Underflow",
+      "category": "PRECISION",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Denormal Weights",
+      "category": "PRECISION",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Dead ReLU (negative weights)",
+      "category": "ARCHITECTURE",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Activation Saturation",
+      "category": "ARCHITECTURE",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Bias Explosion",
+      "category": "ARCHITECTURE",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 3
+    },
+    {
+      "name": "Batch Corruption",
+      "category": "DYNAMICS",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Gradient Accumulation Overflow",
+      "category": "DYNAMICS",
+      "baseline_crashed": false,
+      "arc_survived": true,
+      "rollbacks": 0
+    },
+    {
+      "name": "Triple Threat (NaN + LR + momentum)",
+      "category": "COMBINED",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Cascade Failure",
+      "category": "COMBINED",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Apocalypse (everything breaks)",
+      "category": "COMBINED",
+      "baseline_crashed": true,
+      "arc_survived": true,
+      "rollbacks": 1
+    }
+  ]
+}

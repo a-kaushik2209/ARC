@@ -1,0 +1,27 @@
+ARC - Automatic Recovery Controller
+Copyright (c) 2026 Aryan Kaushik. All rights reserved.
+
+This software was originally created by Aryan Kaushik as part of the ARC
+(Automatic Recovery Controller) research project for self-healing neural
+network training.
+
+ATTRIBUTION REQUIREMENT:
+========================
+
+In accordance with Section 7(b) of the GNU Affero General Public License v3,
+any use, modification, or redistribution of this software MUST include the
+following attribution in a prominent location (e.g., README, documentation,
+or application "About" section):
+
+  "This software uses ARC (Automatic Recovery Controller),
+   originally created by Aryan Kaushik.
+   https://github.com/aryankaushik/arc-training"
+
+Additionally:
+1. The original copyright notices in all source files must be preserved.
+2. Modified versions must clearly state that they have been modified and
+   must not misrepresent the original software.
+3. The name "ARC" and "Automatic Recovery Controller" may not be used to
+   endorse or promote derivative works without prior written permission.
+
+For commercial licensing inquiries: a.kaushik0908@gmail.com

@@ -1,0 +1,137 @@
+[
+  {
+    "baseline": "No Protection",
+    "failure_type": "nan",
+    "steps_completed": 49,
+    "crashed": true,
+    "recovered": false,
+    "rollbacks": 0,
+    "overhead_time": 0.08112430572509766
+  },
+  {
+    "baseline": "Gradient Clipping",
+    "failure_type": "nan",
+    "steps_completed": 49,
+    "crashed": true,
+    "recovered": false,
+    "rollbacks": 0,
+    "overhead_time": 0.09536099433898926
+  },
+  {
+    "baseline": "Manual Checkpoint",
+    "failure_type": "nan",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 1,
+    "overhead_time": 0.17130494117736816
+  },
+  {
+    "baseline": "Early Stopping",
+    "failure_type": "nan",
+    "steps_completed": 49,
+    "crashed": true,
+    "recovered": false,
+    "rollbacks": 0,
+    "overhead_time": 0.06506013870239258
+  },
+  {
+    "baseline": "SelfHealingArc",
+    "failure_type": "nan",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 0,
+    "overhead_time": 0.33222222328186035
+  },
+  {
+    "baseline": "No Protection",
+    "failure_type": "inf",
+    "steps_completed": 49,
+    "crashed": true,
+    "recovered": false,
+    "rollbacks": 0,
+    "overhead_time": 0.13016128540039062
+  },
+  {
+    "baseline": "Gradient Clipping",
+    "failure_type": "inf",
+    "steps_completed": 49,
+    "crashed": true,
+    "recovered": false,
+    "rollbacks": 0,
+    "overhead_time": 0.1630263328552246
+  },
+  {
+    "baseline": "Manual Checkpoint",
+    "failure_type": "inf",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 1,
+    "overhead_time": 0.2830812931060791
+  },
+  {
+    "baseline": "Early Stopping",
+    "failure_type": "inf",
+    "steps_completed": 49,
+    "crashed": true,
+    "recovered": false,
+    "rollbacks": 0,
+    "overhead_time": 0.11739778518676758
+  },
+  {
+    "baseline": "SelfHealingArc",
+    "failure_type": "inf",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 0,
+    "overhead_time": 0.3940615653991699
+  },
+  {
+    "baseline": "No Protection",
+    "failure_type": "explosion",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 0,
+    "overhead_time": 0.23024606704711914
+  },
+  {
+    "baseline": "Gradient Clipping",
+    "failure_type": "explosion",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 0,
+    "overhead_time": 0.26454949378967285
+  },
+  {
+    "baseline": "Manual Checkpoint",
+    "failure_type": "explosion",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 0,
+    "overhead_time": 0.24141693115234375
+  },
+  {
+    "baseline": "Early Stopping",
+    "failure_type": "explosion",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 0,
+    "overhead_time": 0.23015689849853516
+  },
+  {
+    "baseline": "SelfHealingArc",
+    "failure_type": "explosion",
+    "steps_completed": 100,
+    "crashed": false,
+    "recovered": true,
+    "rollbacks": 0,
+    "overhead_time": 0.3894479274749756
+  }
+]

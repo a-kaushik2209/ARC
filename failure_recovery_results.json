@@ -1,0 +1,164 @@
+[
+  {
+    "scenario": "lr_explosion",
+    "without_arc": {
+      "scenario": "lr_explosion",
+      "use_arc": false,
+      "epochs_completed": 5,
+      "failed": false,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [
+        2.3026656061410904,
+        2.302264004945755,
+        2.3012988418340683,
+        2.268161825835705,
+        2.208907298743725
+      ],
+      "final_accuracy": 0.1754
+    },
+    "with_arc": {
+      "scenario": "lr_explosion",
+      "use_arc": true,
+      "epochs_completed": 5,
+      "failed": false,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [
+        2.3038409426808357,
+        2.303311139345169,
+        2.302154377102852,
+        2.2708439752459526,
+        2.3129981234669685
+      ],
+      "final_accuracy": 0.1
+    },
+    "arc_saved": false
+  },
+  {
+    "scenario": "gradient_explosion",
+    "without_arc": {
+      "scenario": "gradient_explosion",
+      "use_arc": false,
+      "epochs_completed": 3,
+      "failed": true,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [
+        2.3245799094438553,
+        2.3682542741298676,
+        2.333137921988964
+      ],
+      "final_accuracy": 0
+    },
+    "with_arc": {
+      "scenario": "gradient_explosion",
+      "use_arc": true,
+      "epochs_completed": 1,
+      "failed": true,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [
+        2.6405933126807213
+      ],
+      "final_accuracy": 0
+    },
+    "arc_saved": false
+  },
+  {
+    "scenario": "corrupted_batch",
+    "without_arc": {
+      "scenario": "corrupted_batch",
+      "use_arc": false,
+      "epochs_completed": 5,
+      "failed": false,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [
+        2.3042538687586784,
+        2.3033535704016685,
+        2.3024999499320984,
+        2.301663041114807,
+        2.301088862121105
+      ],
+      "final_accuracy": 0.1
+    },
+    "with_arc": {
+      "scenario": "corrupted_batch",
+      "use_arc": true,
+      "epochs_completed": 5,
+      "failed": false,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [
+        2.30294056981802,
+        2.3025005012750626,
+        2.3008376955986023,
+        2.2981530353426933,
+        2.2839027494192123
+      ],
+      "final_accuracy": 0.1351
+    },
+    "arc_saved": false
+  },
+  {
+    "scenario": "vanishing_gradients",
+    "without_arc": {
+      "scenario": "vanishing_gradients",
+      "use_arc": false,
+      "epochs_completed": 5,
+      "failed": false,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [
+        2.303859941661358,
+        2.303290456533432,
+        2.303591750562191,
+        2.3033720403909683,
+        2.303127758204937
+      ],
+      "final_accuracy": 0.1
+    },
+    "with_arc": {
+      "scenario": "vanishing_gradients",
+      "use_arc": true,
+      "epochs_completed": 5,
+      "failed": false,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [
+        2.3057361394166946,
+        2.3049339652061462,
+        2.3051874712109566,
+        2.304758444428444,
+        2.3048777505755424
+      ],
+      "final_accuracy": 0.1
+    },
+    "arc_saved": false
+  },
+  {
+    "scenario": "weight_explosion",
+    "without_arc": {
+      "scenario": "weight_explosion",
+      "use_arc": false,
+      "epochs_completed": 0,
+      "failed": true,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [],
+      "final_accuracy": 0
+    },
+    "with_arc": {
+      "scenario": "weight_explosion",
+      "use_arc": true,
+      "epochs_completed": 0,
+      "failed": true,
+      "failure_detected_epoch": null,
+      "interventions": [],
+      "losses": [],
+      "final_accuracy": 0
+    },
+    "arc_saved": false
+  }
+]

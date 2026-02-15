@@ -1,0 +1,87 @@
+{
+  "summary": {
+    "total": 13,
+    "recovered": 6,
+    "detectable": 6
+  },
+  "scenarios": [
+    {
+      "name": "Gradual Weight Decay (1%/step)",
+      "baseline_detected": false,
+      "arc_recovered": false,
+      "rollbacks": 0
+    },
+    {
+      "name": "Aggressive Weight Decay (10%/step)",
+      "baseline_detected": false,
+      "arc_recovered": false,
+      "rollbacks": 0
+    },
+    {
+      "name": "Weight Sign Flip",
+      "baseline_detected": false,
+      "arc_recovered": false,
+      "rollbacks": 0
+    },
+    {
+      "name": "Bias Zeroing (subtle)",
+      "baseline_detected": false,
+      "arc_recovered": false,
+      "rollbacks": 0
+    },
+    {
+      "name": "Layer Collapse (fc1 \u2192 zeros)",
+      "baseline_detected": true,
+      "arc_recovered": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Magnitude Explosion (10%/step)",
+      "baseline_detected": false,
+      "arc_recovered": false,
+      "rollbacks": 0
+    },
+    {
+      "name": "Weight Permutation (shuffle)",
+      "baseline_detected": false,
+      "arc_recovered": false,
+      "rollbacks": 0
+    },
+    {
+      "name": "Output Collapse (fc3 \u2192 constant)",
+      "baseline_detected": false,
+      "arc_recovered": false,
+      "rollbacks": 0
+    },
+    {
+      "name": "Rank Collapse (rank-1 matrices)",
+      "baseline_detected": true,
+      "arc_recovered": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Extreme Sparsity (90% zeros)",
+      "baseline_detected": true,
+      "arc_recovered": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Weight Cloning (all same value)",
+      "baseline_detected": true,
+      "arc_recovered": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Alternating Zero (50% pattern)",
+      "baseline_detected": true,
+      "arc_recovered": true,
+      "rollbacks": 1
+    },
+    {
+      "name": "Negative Scale (small negatives)",
+      "baseline_detected": true,
+      "arc_recovered": true,
+      "rollbacks": 1
+    }
+  ]
+}

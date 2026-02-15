@@ -1,0 +1,2006 @@
+{
+  "MLP": {
+    "nan_loss": {
+      "baseline": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3431682586669922
+          },
+          {
+            "seed": 123,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3926295042037964
+          },
+          {
+            "seed": 456,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.09282675385475159
+          },
+          {
+            "seed": 789,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.5420362949371338
+          },
+          {
+            "seed": 1337,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.2648855149745941
+          },
+          {
+            "seed": 2024,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.031174302101135254
+          },
+          {
+            "seed": 3141,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.10543788969516754
+          },
+          {
+            "seed": 5926,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3201848566532135
+          },
+          {
+            "seed": 8675,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.1938943862915039
+          },
+          {
+            "seed": 3099,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3333134055137634
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 0.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 0,
+            "max": 0
+          },
+          "rollbacks": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 49.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 1.0
+        }
+      },
+      "arc": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.0045583778992295265
+          },
+          {
+            "seed": 123,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.018359096720814705
+          },
+          {
+            "seed": 456,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.012259980663657188
+          },
+          {
+            "seed": 789,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.011834979057312012
+          },
+          {
+            "seed": 1337,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.011704900301992893
+          },
+          {
+            "seed": 2024,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.011835405603051186
+          },
+          {
+            "seed": 3141,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.00561435567215085
+          },
+          {
+            "seed": 5926,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.026967190206050873
+          },
+          {
+            "seed": 8675,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.005832222755998373
+          },
+          {
+            "seed": 3099,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.0016123652458190918
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 1.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      }
+    },
+    "inf_loss": {
+      "baseline": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3431682586669922
+          },
+          {
+            "seed": 123,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3926295042037964
+          },
+          {
+            "seed": 456,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.09282675385475159
+          },
+          {
+            "seed": 789,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.5420362949371338
+          },
+          {
+            "seed": 1337,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.2648855149745941
+          },
+          {
+            "seed": 2024,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.031174302101135254
+          },
+          {
+            "seed": 3141,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.10543788969516754
+          },
+          {
+            "seed": 5926,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3201848566532135
+          },
+          {
+            "seed": 8675,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.1938943862915039
+          },
+          {
+            "seed": 3099,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3333134055137634
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 0.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 0,
+            "max": 0
+          },
+          "rollbacks": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 49.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 1.0
+        }
+      },
+      "arc": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.0045583778992295265
+          },
+          {
+            "seed": 123,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.018359096720814705
+          },
+          {
+            "seed": 456,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.012259980663657188
+          },
+          {
+            "seed": 789,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.011834979057312012
+          },
+          {
+            "seed": 1337,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.011704900301992893
+          },
+          {
+            "seed": 2024,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.011835405603051186
+          },
+          {
+            "seed": 3141,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.00561435567215085
+          },
+          {
+            "seed": 5926,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.026967190206050873
+          },
+          {
+            "seed": 8675,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.005832222755998373
+          },
+          {
+            "seed": 3099,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.0016123652458190918
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 1.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      }
+    },
+    "loss_explosion": {
+      "baseline": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.053089067339897156
+          },
+          {
+            "seed": 123,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.01981658674776554
+          },
+          {
+            "seed": 456,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.21023507416248322
+          },
+          {
+            "seed": 789,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.010249835439026356
+          },
+          {
+            "seed": 1337,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.03941166028380394
+          },
+          {
+            "seed": 2024,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.018564362078905106
+          },
+          {
+            "seed": 3141,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.07985854148864746
+          },
+          {
+            "seed": 5926,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.3113083839416504
+          },
+          {
+            "seed": 8675,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.026823030784726143
+          },
+          {
+            "seed": 3099,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.19137507677078247
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      },
+      "arc": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.0045583778992295265
+          },
+          {
+            "seed": 123,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.018359096720814705
+          },
+          {
+            "seed": 456,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.0103669548407197
+          },
+          {
+            "seed": 789,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.011834979057312012
+          },
+          {
+            "seed": 1337,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.003955120220780373
+          },
+          {
+            "seed": 2024,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.011835405603051186
+          },
+          {
+            "seed": 3141,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.00561435567215085
+          },
+          {
+            "seed": 5926,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.026967190206050873
+          },
+          {
+            "seed": 8675,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.005832222755998373
+          },
+          {
+            "seed": 3099,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 0.0442248173058033
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 0.7,
+            "std": 0.48304589153964794
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      }
+    },
+    "weight_corruption": {
+      "baseline": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3431682586669922
+          },
+          {
+            "seed": 123,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3926295042037964
+          },
+          {
+            "seed": 456,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.09282675385475159
+          },
+          {
+            "seed": 789,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.5420362949371338
+          },
+          {
+            "seed": 1337,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.2648855149745941
+          },
+          {
+            "seed": 2024,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.031174302101135254
+          },
+          {
+            "seed": 3141,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.10543788969516754
+          },
+          {
+            "seed": 5926,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3201848566532135
+          },
+          {
+            "seed": 8675,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.1938943862915039
+          },
+          {
+            "seed": 3099,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 0.3333134055137634
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 0.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 0,
+            "max": 0
+          },
+          "rollbacks": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 49.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 1.0
+        }
+      },
+      "arc": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.004962149541825056
+          },
+          {
+            "seed": 123,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.009608663618564606
+          },
+          {
+            "seed": 456,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.010160345584154129
+          },
+          {
+            "seed": 789,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.00885842926800251
+          },
+          {
+            "seed": 1337,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.006521710194647312
+          },
+          {
+            "seed": 2024,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.010405333712697029
+          },
+          {
+            "seed": 3141,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.006314793601632118
+          },
+          {
+            "seed": 5926,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.015510939992964268
+          },
+          {
+            "seed": 8675,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.013447536155581474
+          },
+          {
+            "seed": 3099,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 0.003280023345723748
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 1.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      }
+    }
+  },
+  "CNN": {
+    "nan_loss": {
+      "baseline": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.318493604660034
+          },
+          {
+            "seed": 123,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3242928981781006
+          },
+          {
+            "seed": 456,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.2970030307769775
+          },
+          {
+            "seed": 789,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3220014572143555
+          },
+          {
+            "seed": 1337,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3126323223114014
+          },
+          {
+            "seed": 2024,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.304731845855713
+          },
+          {
+            "seed": 3141,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.310673952102661
+          },
+          {
+            "seed": 5926,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.279684543609619
+          },
+          {
+            "seed": 8675,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.260932445526123
+          },
+          {
+            "seed": 3099,
+            "failure_type": "nan_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.2761363983154297
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 0.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 0,
+            "max": 0
+          },
+          "rollbacks": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 49.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 1.0
+        }
+      },
+      "arc": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.315972328186035
+          },
+          {
+            "seed": 123,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.300873041152954
+          },
+          {
+            "seed": 456,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.3097400665283203
+          },
+          {
+            "seed": 789,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.3104288578033447
+          },
+          {
+            "seed": 1337,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.29714035987854
+          },
+          {
+            "seed": 2024,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.326446294784546
+          },
+          {
+            "seed": 3141,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.302095413208008
+          },
+          {
+            "seed": 5926,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2979917526245117
+          },
+          {
+            "seed": 8675,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2818949222564697
+          },
+          {
+            "seed": 3099,
+            "failure_type": "nan_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2886173725128174
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 1.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      }
+    },
+    "inf_loss": {
+      "baseline": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.318493604660034
+          },
+          {
+            "seed": 123,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3242928981781006
+          },
+          {
+            "seed": 456,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.2970030307769775
+          },
+          {
+            "seed": 789,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3220014572143555
+          },
+          {
+            "seed": 1337,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3126323223114014
+          },
+          {
+            "seed": 2024,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.304731845855713
+          },
+          {
+            "seed": 3141,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.310673952102661
+          },
+          {
+            "seed": 5926,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.279684543609619
+          },
+          {
+            "seed": 8675,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.260932445526123
+          },
+          {
+            "seed": 3099,
+            "failure_type": "inf_loss",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.2761363983154297
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 0.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 0,
+            "max": 0
+          },
+          "rollbacks": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 49.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 1.0
+        }
+      },
+      "arc": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.315972328186035
+          },
+          {
+            "seed": 123,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.300873041152954
+          },
+          {
+            "seed": 456,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.3097400665283203
+          },
+          {
+            "seed": 789,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.3104288578033447
+          },
+          {
+            "seed": 1337,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.29714035987854
+          },
+          {
+            "seed": 2024,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.326446294784546
+          },
+          {
+            "seed": 3141,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.302095413208008
+          },
+          {
+            "seed": 5926,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2979917526245117
+          },
+          {
+            "seed": 8675,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2818949222564697
+          },
+          {
+            "seed": 3099,
+            "failure_type": "inf_loss",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2886173725128174
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 1.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      }
+    },
+    "loss_explosion": {
+      "baseline": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.278560161590576
+          },
+          {
+            "seed": 123,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.2902610301971436
+          },
+          {
+            "seed": 456,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.297694444656372
+          },
+          {
+            "seed": 789,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.2852206230163574
+          },
+          {
+            "seed": 1337,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.29597544670105
+          },
+          {
+            "seed": 2024,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.2874526977539062
+          },
+          {
+            "seed": 3141,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.3198297023773193
+          },
+          {
+            "seed": 5926,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.3006153106689453
+          },
+          {
+            "seed": 8675,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.253420114517212
+          },
+          {
+            "seed": 3099,
+            "failure_type": "loss_explosion",
+            "use_arc": false,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 0,
+            "final_loss": 2.2266457080841064
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      },
+      "arc": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.315972328186035
+          },
+          {
+            "seed": 123,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.300873041152954
+          },
+          {
+            "seed": 456,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.3097400665283203
+          },
+          {
+            "seed": 789,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.3104288578033447
+          },
+          {
+            "seed": 1337,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.29714035987854
+          },
+          {
+            "seed": 2024,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.326446294784546
+          },
+          {
+            "seed": 3141,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.302095413208008
+          },
+          {
+            "seed": 5926,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2979917526245117
+          },
+          {
+            "seed": 8675,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2818949222564697
+          },
+          {
+            "seed": 3099,
+            "failure_type": "loss_explosion",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2886173725128174
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 1.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      }
+    },
+    "weight_corruption": {
+      "baseline": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.318493604660034
+          },
+          {
+            "seed": 123,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3242928981781006
+          },
+          {
+            "seed": 456,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.2970030307769775
+          },
+          {
+            "seed": 789,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3220014572143555
+          },
+          {
+            "seed": 1337,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.3126323223114014
+          },
+          {
+            "seed": 2024,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.304731845855713
+          },
+          {
+            "seed": 3141,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.310673952102661
+          },
+          {
+            "seed": 5926,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.279684543609619
+          },
+          {
+            "seed": 8675,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.260932445526123
+          },
+          {
+            "seed": 3099,
+            "failure_type": "weight_corruption",
+            "use_arc": false,
+            "recovered": false,
+            "steps_completed": 49,
+            "crashed": true,
+            "rollbacks": 0,
+            "final_loss": 2.2761363983154297
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 0.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 0,
+            "max": 0
+          },
+          "rollbacks": {
+            "mean": 0.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 49.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 1.0
+        }
+      },
+      "arc": {
+        "raw": [
+          {
+            "seed": 42,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2548635005950928
+          },
+          {
+            "seed": 123,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2897160053253174
+          },
+          {
+            "seed": 456,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2818307876586914
+          },
+          {
+            "seed": 789,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.293515920639038
+          },
+          {
+            "seed": 1337,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2995593547821045
+          },
+          {
+            "seed": 2024,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.243849754333496
+          },
+          {
+            "seed": 3141,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2666780948638916
+          },
+          {
+            "seed": 5926,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.306044578552246
+          },
+          {
+            "seed": 8675,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.3025333881378174
+          },
+          {
+            "seed": 3099,
+            "failure_type": "weight_corruption",
+            "use_arc": true,
+            "recovered": true,
+            "steps_completed": 100,
+            "crashed": false,
+            "rollbacks": 1,
+            "final_loss": 2.2934763431549072
+          }
+        ],
+        "stats": {
+          "n_runs": 10,
+          "recovery_rate": {
+            "mean": 1.0,
+            "std": 0.0,
+            "ci_95_low": 0,
+            "ci_95_high": 1,
+            "min": 1,
+            "max": 1
+          },
+          "rollbacks": {
+            "mean": 1.0,
+            "std": 0.0
+          },
+          "steps_completed": {
+            "mean": 100.0,
+            "std": 0.0
+          },
+          "p_value_vs_zero": 0.0
+        }
+      }
+    }
+  }
+}

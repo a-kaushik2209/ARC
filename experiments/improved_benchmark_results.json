@@ -1,0 +1,35 @@
+{
+  "arc_network": {
+    "accuracy": 0.16666666666666666,
+    "precision": 0,
+    "recall": 0.0,
+    "f1": 0,
+    "true_positives": 0,
+    "false_positives": 0,
+    "true_negatives": 10,
+    "false_negatives": 50
+  },
+  "baseline": {
+    "accuracy": 0.8333333333333334,
+    "precision": 0.8333333333333334,
+    "recall": 1.0,
+    "f1": 0.9090909090909091
+  },
+  "improvement": {
+    "f1_percent": -100.0,
+    "recall_points": -100.0,
+    "precision_points": -83.33333333333334
+  },
+  "experiment_details": {
+    "n_trials_per_mode": 10,
+    "failure_modes": [
+      "none",
+      "vanishing",
+      "lr_explosion",
+      "gradient_explosion",
+      "mode_collapse",
+      "grokking_risk"
+    ],
+    "total_experiments": 60
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "nan": {
+    "baseline": {
+      "method": "baseline",
+      "recovered": false,
+      "time_to_recovery_ms": 0,
+      "final_loss": 5.960441589355469,
+      "steps_completed": 50,
+      "crashed": true,
+      "error_message": "Loss is nan"
+    },
+    "manual_checkpoint": {
+      "method": "manual_checkpoint",
+      "recovered": true,
+      "time_to_recovery_ms": 5.288362503051758,
+      "final_loss": 5.5324554443359375,
+      "steps_completed": 100,
+      "crashed": false,
+      "error_message": ""
+    },
+    "arc_v4": {
+      "method": "arc_v4",
+      "recovered": true,
+      "time_to_recovery_ms": 7.099390029907227,
+      "final_loss": 5.334181308746338,
+      "steps_completed": 100,
+      "crashed": false,
+      "error_message": ""
+    }
+  },
+  "inf": {
+    "baseline": {
+      "method": "baseline",
+      "recovered": false,
+      "time_to_recovery_ms": 0,
+      "final_loss": 5.988940715789795,
+      "steps_completed": 50,
+      "crashed": true,
+      "error_message": "Loss is inf"
+    },
+    "manual_checkpoint": {
+      "method": "manual_checkpoint",
+      "recovered": true,
+      "time_to_recovery_ms": 5.255460739135742,
+      "final_loss": 5.540145397186279,
+      "steps_completed": 100,
+      "crashed": false,
+      "error_message": ""
+    },
+    "arc_v4": {
+      "method": "arc_v4",
+      "recovered": true,
+      "time_to_recovery_ms": 6.458044052124023,
+      "final_loss": 5.332967281341553,
+      "steps_completed": 100,
+      "crashed": false,
+      "error_message": ""
+    }
+  },
+  "explosion": {
+    "baseline": {
+      "method": "baseline",
+      "recovered": true,
+      "time_to_recovery_ms": 0,
+      "final_loss": 6.215454578399658,
+      "steps_completed": 100,
+      "crashed": false,
+      "error_message": ""
+    },
+    "manual_checkpoint": {
+      "method": "manual_checkpoint",
+      "recovered": false,
+      "time_to_recovery_ms": 0,
+      "final_loss": 6.267373561859131,
+      "steps_completed": 100,
+      "crashed": false,
+      "error_message": ""
+    },
+    "arc_v4": {
+      "method": "arc_v4",
+      "recovered": true,
+      "time_to_recovery_ms": 4.862785339355469,
+      "final_loss": 5.2982683181762695,
+      "steps_completed": 100,
+      "crashed": false,
+      "error_message": ""
+    }
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "summary": {
+    "total": 16,
+    "baseline_crashes": 14,
+    "arc_recoveries": 14,
+    "arc_crashes": 0,
+    "recovery_rate": 1.0,
+    "elapsed_seconds": 9.983490228652954,
+    "by_tier": {
+      "Tier1": {
+        "total": 5,
+        "recovered": 5
+      },
+      "Tier2": {
+        "total": 4,
+        "recovered": 3
+      },
+      "Tier3": {
+        "total": 3,
+        "recovered": 2
+      },
+      "Tier4": {
+        "total": 4,
+        "recovered": 4
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "name": "Nuclear Learning Rate (1e6)",
+      "tier": "Tier1",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 19
+    },
+    {
+      "name": "All-NaN Injection",
+      "tier": "Tier1",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 30
+    },
+    {
+      "name": "Division by Zero",
+      "tier": "Tier1",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 30
+    },
+    {
+      "name": "Immediate NaN Loss",
+      "tier": "Tier1",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 30
+    },
+    {
+      "name": "Loss Explosion (1e10)",
+      "tier": "Tier1",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 30
+    },
+    {
+      "name": "Domino Collapse (5x)",
+      "tier": "Tier2",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 5
+    },
+    {
+      "name": "Oscillating Death",
+      "tier": "Tier2",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 19
+    },
+    {
+      "name": "Gradient Whiplash (1e6)",
+      "tier": "Tier2",
+      "baseline_crashed": false,
+      "arc_crashed": false,
+      "arc_recovered": false,
+      "rollbacks": 1
+    },
+    {
+      "name": "Optimizer State Corruption",
+      "tier": "Tier2",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 19
+    },
+    {
+      "name": "Byzantine Gradients (50%)",
+      "tier": "Tier3",
+      "baseline_crashed": false,
+      "arc_crashed": false,
+      "arc_recovered": false,
+      "rollbacks": 0
+    },
+    {
+      "name": "Loss Landscape Minefield",
+      "tier": "Tier3",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 14
+    },
+    {
+      "name": "Batch Bomb",
+      "tier": "Tier3",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 6
+    },
+    {
+      "name": "Everything At Once",
+      "tier": "Tier4",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 30
+    },
+    {
+      "name": "Repeated Recovery Stress (10x)",
+      "tier": "Tier4",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 6
+    },
+    {
+      "name": "Long-Tail Catastrophe",
+      "tier": "Tier4",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 30
+    },
+    {
+      "name": "Weight Surgery (50% zeroed)",
+      "tier": "Tier4",
+      "baseline_crashed": true,
+      "arc_crashed": false,
+      "arc_recovered": true,
+      "rollbacks": 30
+    }
+  ]
+}

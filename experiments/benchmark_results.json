@@ -1,0 +1,21 @@
+{
+  "arc_network": {
+    "accuracy": 0.6333333333333333,
+    "precision": 1.0,
+    "recall": 0.45,
+    "f1": 0.6206896551724138
+  },
+  "baseline": {
+    "accuracy": 0.6666666666666666,
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1": 0.8
+  },
+  "improvement_pct": -22.413793103448278,
+  "n_trials": 10,
+  "failure_modes": [
+    "none",
+    "vanishing",
+    "lr_explosion"
+  ]
+}

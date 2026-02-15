@@ -1,0 +1,88 @@
+[
+  {
+    "config_name": "baseline",
+    "avg_step_time_ms": 12.811872999955085,
+    "std_step_time_ms": 1.1710662689362963,
+    "overhead_vs_baseline_pct": 0.0,
+    "memory_peak_mb": 0,
+    "features_enabled": {}
+  },
+  {
+    "config_name": "arc_full",
+    "avg_step_time_ms": 18.412031000116258,
+    "std_step_time_ms": 2.6890215641858073,
+    "overhead_vs_baseline_pct": 43.7106892971918,
+    "memory_peak_mb": 0,
+    "features_enabled": {
+      "enable_checkpointing": true,
+      "checkpoint_frequency": 10,
+      "use_fast_grad_norm": false,
+      "layer_sample_ratio": 1.0
+    }
+  },
+  {
+    "config_name": "arc_no_checkpoint",
+    "avg_step_time_ms": 16.619837999915035,
+    "std_step_time_ms": 1.5703072992868632,
+    "overhead_vs_baseline_pct": 29.72215693968633,
+    "memory_peak_mb": 0,
+    "features_enabled": {
+      "enable_checkpointing": false,
+      "checkpoint_frequency": 1000000,
+      "use_fast_grad_norm": false,
+      "layer_sample_ratio": 1.0
+    }
+  },
+  {
+    "config_name": "arc_less_checkpoints",
+    "avg_step_time_ms": 16.250957000047492,
+    "std_step_time_ms": 1.3611445782182643,
+    "overhead_vs_baseline_pct": 26.842944822388294,
+    "memory_peak_mb": 0,
+    "features_enabled": {
+      "enable_checkpointing": true,
+      "checkpoint_frequency": 50,
+      "use_fast_grad_norm": false,
+      "layer_sample_ratio": 1.0
+    }
+  },
+  {
+    "config_name": "arc_fast_grad",
+    "avg_step_time_ms": 17.265318000099796,
+    "std_step_time_ms": 2.1280604713363287,
+    "overhead_vs_baseline_pct": 34.76029617340356,
+    "memory_peak_mb": 0,
+    "features_enabled": {
+      "enable_checkpointing": true,
+      "checkpoint_frequency": 10,
+      "use_fast_grad_norm": true,
+      "layer_sample_ratio": 1.0
+    }
+  },
+  {
+    "config_name": "arc_sampled_layers",
+    "avg_step_time_ms": 17.17970099991362,
+    "std_step_time_ms": 2.64907608202598,
+    "overhead_vs_baseline_pct": 34.092033225538906,
+    "memory_peak_mb": 0,
+    "features_enabled": {
+      "enable_checkpointing": true,
+      "checkpoint_frequency": 10,
+      "use_fast_grad_norm": true,
+      "layer_sample_ratio": 0.1
+    }
+  },
+  {
+    "config_name": "arc_lite",
+    "avg_step_time_ms": 16.27561600000263,
+    "std_step_time_ms": 1.9380147098725713,
+    "overhead_vs_baseline_pct": 27.03541472866369,
+    "memory_peak_mb": 0,
+    "features_enabled": {
+      "enable_checkpointing": true,
+      "checkpoint_frequency": 50,
+      "use_fast_grad_norm": true,
+      "layer_sample_ratio": 0.1
+    }
+  }
+]

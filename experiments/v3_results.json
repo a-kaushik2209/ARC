@@ -1,0 +1,20 @@
+{
+  "arc_network": {
+    "accuracy": 0.8333333333333334,
+    "precision": 0.8333333333333334,
+    "recall": 1.0,
+    "f1": 0.9090909090909091,
+    "tp": 50,
+    "fp": 10,
+    "tn": 0,
+    "fn": 0
+  },
+  "baseline": {
+    "accuracy": 0.8333333333333334,
+    "precision": 0.8333333333333334,
+    "recall": 1.0,
+    "f1": 0.9090909090909091
+  },
+  "winner": "tie",
+  "total_experiments": 60
+}

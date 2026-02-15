@@ -1,0 +1,539 @@
+[
+  {
+    "model": "VeryDeepMLP",
+    "scenario": "High LR (1.0)",
+    "baseline": {
+      "model": "VeryDeepMLP",
+      "scenario": "High LR (1.0)",
+      "use_arc": false,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        2.3253959875840406,
+        2.3208873638739953,
+        2.3147335602686954,
+        2.328321181810819,
+        2.3252467925731954,
+        2.323377590913039,
+        2.3291250558999868,
+        2.3234689235687256,
+        2.3213079159076395,
+        2.31707763671875
+      ]
+    },
+    "arc": {
+      "model": "VeryDeepMLP",
+      "scenario": "High LR (1.0)",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        2.3253959875840406,
+        2.3208873638739953,
+        2.3147335602686954,
+        2.328321181810819,
+        2.3252467925731954,
+        2.323377590913039,
+        2.3291250558999868,
+        2.3234689235687256,
+        2.3213079159076395,
+        2.31707763671875
+      ]
+    },
+    "saved": false
+  },
+  {
+    "model": "VeryDeepMLP",
+    "scenario": "High LR + No Decay",
+    "baseline": {
+      "model": "VeryDeepMLP",
+      "scenario": "High LR + No Decay",
+      "use_arc": false,
+      "epochs_completed": 0,
+      "diverged": true,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": []
+    },
+    "arc": {
+      "model": "VeryDeepMLP",
+      "scenario": "High LR + No Decay",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 1,
+      "lr_reductions": 1,
+      "losses": [
+        2.3144179383913674,
+        2.3032032526456394,
+        2.3002679898188663,
+        2.29976278084975,
+        2.2983978528242845,
+        2.3026775396787205,
+        2.2987226156088023,
+        2.300073843735915,
+        2.3001149067511926,
+        2.298967379790086
+      ]
+    },
+    "saved": true
+  },
+  {
+    "model": "VeryDeepMLP",
+    "scenario": "Bad Initialization",
+    "baseline": {
+      "model": "VeryDeepMLP",
+      "scenario": "Bad Initialization",
+      "use_arc": false,
+      "epochs_completed": 0,
+      "diverged": true,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": []
+    },
+    "arc": {
+      "model": "VeryDeepMLP",
+      "scenario": "Bad Initialization",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        1.6893777645982515e+33,
+        1.70276495531251e+33,
+        1.6865765086449318e+33,
+        1.686024619501168e+33,
+        1.6982505986520378e+33,
+        1.702960067756298e+33,
+        1.6895997665280848e+33,
+        1.6727224776482622e+33,
+        1.6785006044430705e+33,
+        1.6876574267031766e+33
+      ]
+    },
+    "saved": true
+  },
+  {
+    "model": "VeryDeepMLP",
+    "scenario": "Pathological Data",
+    "baseline": {
+      "model": "VeryDeepMLP",
+      "scenario": "Pathological Data",
+      "use_arc": false,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        3.6365187718318057,
+        2.3025300869574914,
+        2.3007732904874363,
+        2.299948820701012,
+        2.29922839311453,
+        2.3011326789855957,
+        2.298878339620737,
+        2.2998903898092418,
+        2.299453753691453,
+        2.2988022290743313
+      ]
+    },
+    "arc": {
+      "model": "VeryDeepMLP",
+      "scenario": "Pathological Data",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 1,
+      "lr_reductions": 1,
+      "losses": [
+        3.1614582538604736,
+        2.3030932133014383,
+        2.3001035360189586,
+        2.2902809381484985,
+        2.2999320947206936,
+        2.2998158014737644,
+        2.2998050176180325,
+        2.300198738391583,
+        2.2999909841097317,
+        2.2989140107081485
+      ]
+    },
+    "saved": false
+  },
+  {
+    "model": "DeepVanillaRNN",
+    "scenario": "High LR (1.0)",
+    "baseline": {
+      "model": "DeepVanillaRNN",
+      "scenario": "High LR (1.0)",
+      "use_arc": false,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        17.653397688498863,
+        58.00327139634352,
+        49.126532774705154,
+        56.32887385441707,
+        59.67372512817383,
+        60.54295231745793,
+        52.81097148014949,
+        52.4769590817965,
+        62.776010073148285,
+        59.72255853506235
+      ]
+    },
+    "arc": {
+      "model": "DeepVanillaRNN",
+      "scenario": "High LR (1.0)",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        2.6186786798330455,
+        2.4563521238473744,
+        2.446715996815608,
+        2.437531452912551,
+        2.42517220056974,
+        2.395045592234685,
+        2.3669961782602162,
+        2.5138384195474477,
+        2.4141348875485935,
+        2.4543582659501295
+      ]
+    },
+    "saved": false
+  },
+  {
+    "model": "DeepVanillaRNN",
+    "scenario": "High LR + No Decay",
+    "baseline": {
+      "model": "DeepVanillaRNN",
+      "scenario": "High LR + No Decay",
+      "use_arc": false,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        7.693735709557166,
+        6.455186201975896,
+        6.5105887192946215,
+        5.922655032231257,
+        5.028598491962139,
+        5.3455810363476095,
+        4.651469248991746,
+        4.82272483752324,
+        4.947201215303862,
+        4.505576298787044
+      ]
+    },
+    "arc": {
+      "model": "DeepVanillaRNN",
+      "scenario": "High LR + No Decay",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        22.329985215113712,
+        31.958727029653694,
+        34.79592968867375,
+        37.59170077397273,
+        35.7879031254695,
+        29.557711381178635,
+        31.350667513333836,
+        35.35399935795711,
+        36.22791525033804,
+        34.28724010174091
+      ]
+    },
+    "saved": false
+  },
+  {
+    "model": "DeepVanillaRNN",
+    "scenario": "Bad Initialization",
+    "baseline": {
+      "model": "DeepVanillaRNN",
+      "scenario": "Bad Initialization",
+      "use_arc": false,
+      "epochs_completed": 0,
+      "diverged": true,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": []
+    },
+    "arc": {
+      "model": "DeepVanillaRNN",
+      "scenario": "Bad Initialization",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        101.3795389028696,
+        102.70941220797025,
+        101.90395179161659,
+        102.38581143892728,
+        101.83617547842172,
+        102.81148529052734,
+        103.77726452167218,
+        99.46075674203726,
+        102.76655695988582,
+        101.01031200702374
+      ]
+    },
+    "saved": true
+  },
+  {
+    "model": "DeepVanillaRNN",
+    "scenario": "Pathological Data",
+    "baseline": {
+      "model": "DeepVanillaRNN",
+      "scenario": "Pathological Data",
+      "use_arc": false,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        2.574173010312594,
+        2.5232668106372538,
+        2.5117086263803334,
+        2.500841599244338,
+        2.475640737093412,
+        2.5366702996767483,
+        2.425173594401433,
+        2.4328777606670675,
+        2.4565705886253943,
+        2.493125163591825
+      ]
+    },
+    "arc": {
+      "model": "DeepVanillaRNN",
+      "scenario": "Pathological Data",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        2.5567007615016055,
+        2.537438080861018,
+        2.4812697814061093,
+        2.6601698581988993,
+        2.468772613085233,
+        2.5569725770216722,
+        2.5777881879072924,
+        2.4748716354370117,
+        2.5185812620016246,
+        2.4679296750288744
+      ]
+    },
+    "saved": false
+  },
+  {
+    "model": "UnstableTransformer",
+    "scenario": "High LR (1.0)",
+    "baseline": {
+      "model": "UnstableTransformer",
+      "scenario": "High LR (1.0)",
+      "use_arc": false,
+      "epochs_completed": 1,
+      "diverged": true,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        96.76245247400723
+      ]
+    },
+    "arc": {
+      "model": "UnstableTransformer",
+      "scenario": "High LR (1.0)",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        4.168759235968957,
+        3.334469428429237,
+        2.6509767862466664,
+        2.751021990409264,
+        2.9014950532179613,
+        2.75801761333759,
+        2.4784351678994985,
+        2.93467666552617,
+        2.530606691653912,
+        2.6974335450392504
+      ]
+    },
+    "saved": true
+  },
+  {
+    "model": "UnstableTransformer",
+    "scenario": "High LR + No Decay",
+    "baseline": {
+      "model": "UnstableTransformer",
+      "scenario": "High LR + No Decay",
+      "use_arc": false,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        6.819288198764507,
+        3.3906182692601132,
+        2.7353663994715762,
+        2.5545625503246603,
+        2.4546935191521277,
+        2.537340530982384,
+        2.3998181086320143,
+        2.4470190084897556,
+        2.4075096203730655,
+        2.393412938484779
+      ]
+    },
+    "arc": {
+      "model": "UnstableTransformer",
+      "scenario": "High LR + No Decay",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        7.5839161689464865,
+        3.762531665655283,
+        2.7778792197887716,
+        2.658198723426232,
+        2.6241265260256252,
+        2.559599307867197,
+        2.4170246857863207,
+        2.4163847886599026,
+        2.554778264119075,
+        2.3679741529318004
+      ]
+    },
+    "saved": false
+  },
+  {
+    "model": "UnstableTransformer",
+    "scenario": "Bad Initialization",
+    "baseline": {
+      "model": "UnstableTransformer",
+      "scenario": "Bad Initialization",
+      "use_arc": false,
+      "epochs_completed": 1,
+      "diverged": true,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        42.75785358135517
+      ]
+    },
+    "arc": {
+      "model": "UnstableTransformer",
+      "scenario": "Bad Initialization",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        53.97816056471605,
+        47.329051384559044,
+        24.385784149169922,
+        19.408425111037033,
+        22.41019476377047,
+        23.4552861727201,
+        26.211087006788986,
+        23.764538324796238,
+        14.25367127932035,
+        12.696519998403696
+      ]
+    },
+    "saved": true
+  },
+  {
+    "model": "UnstableTransformer",
+    "scenario": "Pathological Data",
+    "baseline": {
+      "model": "UnstableTransformer",
+      "scenario": "Pathological Data",
+      "use_arc": false,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        2.89268972323491,
+        2.5023793623997617,
+        2.4148728297306943,
+        2.3864436516394982,
+        2.3736984729766846,
+        2.3630723586449256,
+        2.3468912014594445,
+        2.341673410855807,
+        2.3462900748619666,
+        2.3271015790792613
+      ]
+    },
+    "arc": {
+      "model": "UnstableTransformer",
+      "scenario": "Pathological Data",
+      "use_arc": true,
+      "epochs_completed": 10,
+      "diverged": false,
+      "crashed": false,
+      "rollbacks": 0,
+      "lr_reductions": 0,
+      "losses": [
+        2.9329290940211368,
+        2.491674679976243,
+        2.4266251417306752,
+        2.4017120874845066,
+        2.3842400037325344,
+        2.3687616678384633,
+        2.359958685361422,
+        2.343361029258141,
+        2.3524183126596303,
+        2.3328413046323337
+      ]
+    },
+    "saved": false
+  }
+]

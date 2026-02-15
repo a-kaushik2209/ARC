@@ -1,0 +1,107 @@
+{
+  "nan": {
+    "arc": {
+      "method": "ARC v4.0",
+      "failure_type": "nan",
+      "recovered": true,
+      "time_to_recovery_ms": 12.951374053955078,
+      "final_loss": 5.330502033233643,
+      "steps_completed": 100,
+      "setup_complexity_loc": 3,
+      "memory_overhead_pct": 27.0,
+      "notes": "Auto-recovery with rollback + LR reduction"
+    },
+    "torchft": {
+      "method": "torchft",
+      "failure_type": "nan",
+      "recovered": false,
+      "time_to_recovery_ms": 0,
+      "final_loss": 5.967740058898926,
+      "steps_completed": 50,
+      "setup_complexity_loc": 50,
+      "memory_overhead_pct": 10.0,
+      "notes": "Designed for distributed worker failures, not numeric stability. No auto-detection of NaN/Inf."
+    },
+    "manual": {
+      "method": "Manual Checkpoint",
+      "failure_type": "nan",
+      "recovered": true,
+      "time_to_recovery_ms": 4.489898681640625,
+      "final_loss": 4.95123815536499,
+      "steps_completed": 100,
+      "setup_complexity_loc": 30,
+      "memory_overhead_pct": 20.0,
+      "notes": "Manual NaN detection + checkpoint restore. No LR adjustment."
+    }
+  },
+  "inf": {
+    "arc": {
+      "method": "ARC v4.0",
+      "failure_type": "inf",
+      "recovered": true,
+      "time_to_recovery_ms": 3.8242340087890625,
+      "final_loss": 5.317309856414795,
+      "steps_completed": 100,
+      "setup_complexity_loc": 3,
+      "memory_overhead_pct": 27.0,
+      "notes": "Auto-recovery with rollback + LR reduction"
+    },
+    "torchft": {
+      "method": "torchft",
+      "failure_type": "inf",
+      "recovered": false,
+      "time_to_recovery_ms": 0,
+      "final_loss": 6.012302398681641,
+      "steps_completed": 50,
+      "setup_complexity_loc": 50,
+      "memory_overhead_pct": 10.0,
+      "notes": "Designed for distributed worker failures, not numeric stability. No auto-detection of NaN/Inf."
+    },
+    "manual": {
+      "method": "Manual Checkpoint",
+      "failure_type": "inf",
+      "recovered": true,
+      "time_to_recovery_ms": 3.5681724548339844,
+      "final_loss": 4.893887996673584,
+      "steps_completed": 100,
+      "setup_complexity_loc": 30,
+      "memory_overhead_pct": 20.0,
+      "notes": "Manual NaN detection + checkpoint restore. No LR adjustment."
+    }
+  },
+  "explosion": {
+    "arc": {
+      "method": "ARC v4.0",
+      "failure_type": "explosion",
+      "recovered": true,
+      "time_to_recovery_ms": 6.376504898071289,
+      "final_loss": 5.29272985458374,
+      "steps_completed": 100,
+      "setup_complexity_loc": 3,
+      "memory_overhead_pct": 27.0,
+      "notes": "Auto-recovery with rollback + LR reduction"
+    },
+    "torchft": {
+      "method": "torchft",
+      "failure_type": "explosion",
+      "recovered": true,
+      "time_to_recovery_ms": 0,
+      "final_loss": 6.245733261108398,
+      "steps_completed": 100,
+      "setup_complexity_loc": 50,
+      "memory_overhead_pct": 10.0,
+      "notes": "Designed for distributed worker failures, not numeric stability. No auto-detection of NaN/Inf."
+    },
+    "manual": {
+      "method": "Manual Checkpoint",
+      "failure_type": "explosion",
+      "recovered": false,
+      "time_to_recovery_ms": 0,
+      "final_loss": 6.337360382080078,
+      "steps_completed": 100,
+      "setup_complexity_loc": 30,
+      "memory_overhead_pct": 20.0,
+      "notes": "Manual NaN detection + checkpoint restore. No LR adjustment."
+    }
+  }
+}

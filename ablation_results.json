@@ -1,0 +1,87 @@
+{
+  "Full ARC": {
+    "nan": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "inf": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "explosion": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 0.6666666666666666
+    }
+  },
+  "No Forecasting": {
+    "nan": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "inf": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "explosion": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 0.6666666666666666
+    }
+  },
+  "No LR Reduction": {
+    "nan": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "inf": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "explosion": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 0.6666666666666666
+    }
+  },
+  "Frequent Checkpoints": {
+    "nan": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "inf": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "explosion": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 0.6666666666666666
+    }
+  },
+  "Rare Checkpoints": {
+    "nan": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "inf": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 1.0
+    },
+    "explosion": {
+      "recovery_rate": 1.0,
+      "recovery_std": 0.0,
+      "mean_rollbacks": 0.6666666666666666
+    }
+  }
+}
