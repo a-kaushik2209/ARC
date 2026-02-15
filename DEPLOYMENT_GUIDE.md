@@ -2,11 +2,11 @@
 
 ## Making ARC Accessible to Everyone
 
-This guide covers all methods to distribute ARC so anyone can use it with their training.
+This guide covers all methods (that will be availaible soon) to distribute ARC so anyone can use it with their training.
 
 ---
 
-## 🚀 Quick Start (For Users)
+## Quick Start (For Users)
 
 ### Method 1: pip install (Recommended)
 
