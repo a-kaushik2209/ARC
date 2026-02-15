@@ -1,9 +1,4 @@
-# ARC v4.0 Efficiency Report: Addressing Reviewer Concerns
-
-**Prepared for**: NeurIPS/MLSys Reviewers  
-**Version**: 4.0 (January 2026)  
-**Status**: Under Validation
-
+# ARC v4.0 Efficiency Report
 ---
 
 ## Executive Summary
@@ -24,21 +19,21 @@ ARC (Automatic Recovery Controller) v4.0 is a comprehensive training stability s
 
 ---
 
-## ⚠️ Known Limitations (Read First)
+## Known Limitations (Read First)
 
 **What ARC Cannot Handle**:
 
-- ❌ Failures before first checkpoint (typically steps 0-10)
-- ❌ Data corruption or adversarial poisoning
-- ❌ Silent semantic errors (wrong architecture, bad hyperparameters)
-- ❌ Non-PyTorch frameworks
+- Failures before first checkpoint (typically steps 0-10)
+-  Data corruption or adversarial poisoning
+-  Silent semantic errors (wrong architecture, bad hyperparameters)
+-  Non-PyTorch frameworks
 
 **Hardware Caveats**:
 
-- ✅ NVIDIA GPUs: Fully validated
-- ⚠️ AMD ROCm: Partial support, not validated
-- ⚠️ Apple MPS: Single-device only, experimental
-- ⚠️ CPU-only: Works but slow
+-  NVIDIA GPUs: Fully validated
+-  AMD ROCm: Partial support, not validated
+-  Apple MPS: Single-device only, experimental
+-  CPU-only: Works but slow
 
 **Scale Constraints**:
 
@@ -129,7 +124,7 @@ From `overhead_results.json` - for reference only:
 | **Debugging unstable runs** | ARC Full      | 44%      | Every 10 steps  | New models         |
 | **Stable baselines**        | Disabled      | 0%       | Manual only     | Known-good configs |
 
-> 💡 **Tip**: Start with ARC Lite. Switch to Full Mode only if you encounter failures between checkpoints.
+>  **Tip**: Start with ARC Lite. Switch to Full Mode only if you encounter failures between checkpoints.
 
 ---
 
@@ -318,24 +313,3 @@ ARC v4.0 is a **comprehensive training stability system**:
 | Silent failure detection          | ⚠️ Detection only | Recovery validation pending  |
 | Multi-GPU support                 | 🔄 Experimental   | Needs production testing     |
 | Universal hardware                | ⚠️ NVIDIA only    | AMD/MPS not validated        |
-
----
-
-## Appendix A: Pending Experiments
-
-| Experiment                      | Purpose                     | Priority |
-| ------------------------------- | --------------------------- | -------- |
-| DDP 2/4/8-GPU validation        | Prove distributed works     | HIGH     |
-| Silent failure precision/recall | Validate detection accuracy | HIGH     |
-| AMP stress test (A100/V100)     | Hardware matrix             | MEDIUM   |
-
----
-
-## Appendix B: Completed Experiments ✅
-
-| Experiment             | Result                    | File                              |
-| ---------------------- | ------------------------- | --------------------------------- |
-| torchft comparison     | ARC 3/3, torchft 1/3      | `torchft_comparison_results.json` |
-| Overhead ablation      | 27% with ARC Lite         | `overhead_ablation_results.json`  |
-| Statistical validation | p < 0.001 all types       | `statistical_results.json`        |
-| SOTA comparison        | ARC 15% better final loss | `sota_comparison_results.json`    |
