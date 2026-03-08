@@ -1,96 +1,159 @@
-# ARC Deployment Guide
+<div align="center">
 
-## Making ARC Accessible to Everyone
+# ARC — Deployment Guide
 
-This guide covers all methods to distribute ARC so anyone can use it with their training.
+### Installation, Distribution, and Production Setup
+
+</div>
 
 ---
 
-## 🚀 Quick Start (For Users)
+## Quick Start
 
-### Method 1: pip install (Recommended)
+### Install from PyPI
 
 ```bash
-# From PyPI (after publishing)
 pip install arc-training
+```
 
-# From GitHub directly
-pip install git+https://github.com/yourusername/arc-training.git
+### Install from GitHub
 
-# Local development install
-git clone https://github.com/yourusername/arc-training.git
-cd arc-training
+```bash
+pip install git+https://github.com/a-kaushik2209/ARC.git
+```
+
+### Install for Development
+
+```bash
+git clone https://github.com/a-kaushik2209/ARC.git
+cd ARC
 pip install -e .
 ```
 
-### Method 2: One-Line Integration
+---
+
+## Integration
+
+### Vanilla PyTorch — 3 Lines
 
 ```python
-# Add to ANY PyTorch training script
-from arc import WeightRollback
+from arc import Arc
 
-# Wrap your training loop (3 lines!)
-arc = WeightRollback(model, optimizer)
+controller = Arc(model, optimizer)
+
 for batch in dataloader:
     loss = model(batch)
-    action = arc.step(loss)  # Auto-detects and recovers from failures
+    action = controller.step(loss)
+
     if not action.rolled_back:
         loss.backward()
         optimizer.step()
 ```
 
----
+### PyTorch Lightning — 1 Line
 
-## Distribution Methods
+```python
+from arc import ArcCallback
 
-### 1. PyPI (pip install) - Primary
-
-**Step 1: Update setup.py**
-
-```bash
-# Already done - see setup.py updates
+trainer = pl.Trainer(callbacks=[ArcCallback()])
 ```
 
-**Step 2: Create distribution**
+### Configuration
+
+```python
+from arc import Arc
+from arc.config import Config
+
+config = Config()
+config.monitoring.check_interval = 50
+config.checkpointing.quantized = True
+config.recovery.max_rollbacks = 5
+
+controller = Arc(model, optimizer, config=config)
+```
+
+---
+
+## Publishing to PyPI
+
+### Build
 
 ```bash
 pip install build twine
 python -m build
 ```
 
-**Step 3: Test on TestPyPI**
+### Test on TestPyPI
 
 ```bash
 twine upload --repository testpypi dist/*
 pip install --index-url https://test.pypi.org/simple/ arc-training
 ```
 
-**Step 4: Publish to PyPI**
+### Publish
 
 ```bash
 twine upload dist/*
 ```
 
-### 2. GitHub Releases
+---
 
-**Step 1: Tag a release**
+## Docker
+
+```dockerfile
+FROM pytorch/pytorch:2.1.0-cuda11.8-runtime
+RUN pip install arc-training
+```
 
 ```bash
-git tag -a v4.0.0 -m "ARC v4.0.0 - Production Ready"
+docker build -t arc-training .
+docker run -it arc-training python train.py
+```
+
+---
+
+## GitHub Releases
+
+```bash
+git tag -a v4.0.0 -m "ARC v4.0.0"
 git push origin v4.0.0
 ```
 
-**Step 2: Create GitHub Release**
+Then create a release on GitHub, attach the wheel files from `dist/`, and add release notes.
 
-- Go to GitHub → Releases → New Release
-- Select tag v4.0.0
-- Upload wheel files from `dist/`
-- Add release notes
+---
 
-### 3. Conda-Forge
+## CI/CD — Auto-Publish on Release
 
 ```yaml
-# meta.yaml for conda-forge
+# .github/workflows/publish.yml
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - run: pip install build twine
+      - run: python -m build
+      - run: twine upload dist/*
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+```
+
+---
+
+## Conda-Forge
+
+```yaml
 package:
   name: arc-training
   version: 4.0.0
@@ -108,173 +171,64 @@ requirements:
     - numpy >=1.19.0
 ```
 
-### 4. Docker Image
+---
 
-```dockerfile
-# Dockerfile
-FROM pytorch/pytorch:2.1.0-cuda11.8-runtime
+## Package Structure
 
-RUN pip install arc-training
-
-# Usage: docker run -it arc-training python train.py
 ```
+arc-training/
+├── arc/                    Core library
+├── examples/               Integration examples
+├── experiments/            Benchmarks and validation scripts
+├── setup.py                Package configuration
+├── pyproject.toml          Modern Python packaging
+├── MANIFEST.in             Distribution manifest
+├── LICENSE                 AGPL-3.0
+├── README.md               Project documentation
+├── CHANGELOG.md            Version history
+└── ARC_EFFICIENCY_REPORT.md  Technical report
+```
+
+### Required Files
+
+| File             | Purpose                           |
+| :--------------- | :-------------------------------- |
+| `setup.py`       | Package metadata and dependencies |
+| `pyproject.toml` | Modern build system configuration |
+| `MANIFEST.in`    | Distribution file inclusion rules |
+| `LICENSE`        | AGPL-3.0 license text             |
+| `README.md`      | PyPI long description             |
 
 ---
 
-## Required Files for Distribution
+## Release Checklist
 
-### pyproject.toml (Modern Python packaging)
+### Pre-Release
 
-```toml
-[build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
+- [ ] Update version in `setup.py` and `pyproject.toml`
+- [ ] Update `CHANGELOG.md` with release notes
+- [ ] Run full test suite: `python experiments/comprehensive_benchmark.py`
+- [ ] Verify all JSON result files are current
 
-[project]
-name = "arc-training"
-version = "4.0.0"
-description = "Automatic Recovery Controller for Neural Network Training"
-readme = "README.md"
-license = {text = "MIT"}
-authors = [{name = "Aryan Kaushik"}]
-requires-python = ">=3.8"
-dependencies = [
-    "torch>=1.9.0",
-    "numpy>=1.19.0",
-]
+### Build and Publish
 
-[project.urls]
-Homepage = "https://github.com/yourusername/arc-training"
-Documentation = "https://arc-training.readthedocs.io"
-```
-
-### MANIFEST.in
-
-```
-include README.md
-include LICENSE
-include requirements.txt
-recursive-include arc *.py
-```
-
-### LICENSE (MIT)
-
-```
-MIT License
-
-Copyright (c) 2026 Aryan Kaushik
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software...
-```
-
----
-
-## Documentation Options
-
-### 1. ReadTheDocs (Free)
-
-```bash
-pip install sphinx sphinx-rtd-theme
-sphinx-quickstart docs
-```
-
-### 2. MkDocs (Simple)
-
-```bash
-pip install mkdocs mkdocs-material
-mkdocs new .
-mkdocs serve
-```
-
-### 3. GitHub Pages
-
-```bash
-mkdocs gh-deploy
-```
-
----
-
-## CI/CD Setup
-
-### GitHub Actions (Auto-publish on release)
-
-```yaml
-# .github/workflows/publish.yml
-name: Publish to PyPI
-
-on:
-  release:
-    types: [published]
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-      - run: pip install build twine
-      - run: python -m build
-      - run: twine upload dist/*
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-```
-
----
-
-## Checklist for v4.0.0 Release
-
-### Pre-release
-
-- [ ] Update version in setup.py/pyproject.toml
-- [ ] Update CHANGELOG.md
-- [ ] Run full test suite
-- [ ] Update README with badges
-
-### Package Files
-
-- [x] setup.py - exists
-- [ ] pyproject.toml - create
-- [ ] MANIFEST.in - create
-- [ ] LICENSE - create/update
-- [ ] CHANGELOG.md - create
-
-### Distribution
-
-- [ ] Build wheel: `python -m build`
+- [ ] Build: `python -m build`
 - [ ] Test locally: `pip install dist/*.whl`
-- [ ] Upload to TestPyPI
-- [ ] Test from TestPyPI
+- [ ] Upload to TestPyPI and verify installation
 - [ ] Upload to PyPI
-- [ ] Create GitHub release
-- [ ] (Optional) Submit to conda-forge
+- [ ] Create GitHub release with wheel artifacts
+- [ ] Tag release: `git tag -a v4.0.0 -m "Release v4.0.0"`
 
-### Documentation
+### Post-Release
 
-- [ ] Update README.md
-- [ ] Create docs with mkdocs/sphinx
-- [ ] Deploy to ReadTheDocs/GitHub Pages
+- [ ] Verify `pip install arc-training` works
+- [ ] Update documentation links
+- [ ] Announce release
 
 ---
 
-## One-Command Release
+<div align="center">
 
-```bash
-# Full release script
-./release.sh 4.0.0
-```
+_ARC Deployment Guide · Aryan Kaushik · 2026_
 
-Where release.sh contains:
-
-```bash
-#!/bin/bash
-VERSION=$1
-git tag -a v$VERSION -m "Release v$VERSION"
-git push origin v$VERSION
-python -m build
-twine upload dist/*
-echo "Released v$VERSION to PyPI!"
-```
+</div>
