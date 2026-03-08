@@ -6,6 +6,7 @@
 
 _Real-time fault tolerance that monitors, predicts, and recovers from training failures — automatically._
 
+[![PyPI](https://img.shields.io/badge/PyPI-arc--training-blue?style=for-the-badge&logo=pypi&logoColor=white)](https://pypi.org/project/arc-training)
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-green?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0)
@@ -39,7 +40,15 @@ You keep training. ARC keeps it alive.
 ### Installation
 
 ```bash
-pip install -r requirements.txt
+pip install arc-training
+```
+
+Or install from source:
+
+```bash
+git clone https://github.com/a-kaushik2209/ARC.git
+cd ARC
+pip install -e .
 ```
 
 ### 3-Line Integration
