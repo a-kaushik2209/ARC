@@ -1,10 +1,10 @@
 <div align="center">
 
-# ARC v4.0 — Technical Report
+# ARC v4.1 — Technical Report
 
 ### Efficiency, Recovery Performance, and Scalability Analysis
 
-_Prepared for peer review · January 2026_
+_Updated March 2026 · All numbers backed by reproducible experiment scripts_
 
 </div>
 
@@ -12,207 +12,137 @@ _Prepared for peer review · January 2026_
 
 ## Executive Summary
 
-ARC (Autonomous Recovery Controller) v4.0 is a real-time fault-tolerance framework for neural network training. This report documents empirical results with honest scoping of all claims.
+ARC (Autonomous Recovery Controller) is a runtime monitoring framework for autonomous detection and recovery from neural network training failures. This report documents empirical results from controlled experiments.
 
-| Metric        | Result                       | Validation                            |
-| :------------ | :--------------------------- | :------------------------------------ |
-| Recovery Rate | **100%** on numeric failures | 10 seeds × 4 architectures, p < 0.001 |
-| Overhead      | **27% ± 3%** (ARC Lite)      | Ablation study, 3 model scales        |
-| Model Scale   | Up to **1.5B parameters**    | GPT-2 XL with quantized checkpoints   |
-| vs torchft    | **3/3** vs 1/3 recoveries    | Head-to-head, identical conditions    |
+| Metric              | Result                          | Backing Script              |
+| :------------------ | :------------------------------ | :-------------------------- |
+| Recovery Rate       | **100%** (25/25 scenarios)      | `baseline_comparison.py`    |
+| Prediction Accuracy | **97.5%** (200 scenarios, 5-CV) | `prediction_200_v2.py`      |
+| Precision           | **100%** (zero false positives) | `prediction_200_v2.py`      |
+| Overhead            | **<10%** for 250K+ params (CPU) | `overhead_measurement.py`   |
+| Model Scale         | Up to **117M** parameters       | `validate_claims_phase2.py` |
 
-> **Scope**: All "100% recovery" claims are restricted to our test suite of induced failures. Real-world failure modes may differ.
-
----
-
-## 1. Recovery Performance
-
-### 1.1 Statistical Validation
-
-**Protocol**: 10 seeds × 4 architectures × 5 failure types = 200 total runs.
-
-| Failure Type       | Baseline |   ARC    |   95% CI    | p-value |  Status   |
-| :----------------- | :------: | :------: | :---------: | :-----: | :-------: |
-| NaN Loss           |    0%    | **100%** | 96.3 – 100% | < 0.001 | Validated |
-| Inf Loss           |    0%    | **100%** | 96.3 – 100% | < 0.001 | Validated |
-| Loss Explosion     |  100%\*  | **100%** | 96.3 – 100% |    —    | Validated |
-| Weight Corruption  |    0%    | **100%** | 96.3 – 100% | < 0.001 | Validated |
-| Gradient Explosion |    0%    | **100%** | 96.3 – 100% | < 0.001 | Validated |
-
-_\*Baseline survives loss explosion but with degraded final loss (0.21 vs 0.01 with ARC)._
-
-### 1.2 Extended Failure Coverage
-
-| Category    | Failure Type                         | Detection |  Recovery  | Status              |
-| :---------- | :----------------------------------- | :-------: | :--------: | :------------------ |
-| Resource    | OOM (forward / backward / optimizer) |    Yes    |    Yes     | Validated           |
-| Silent      | Accuracy collapse                    |    Yes    | Alert only | Detection validated |
-| Silent      | Mode collapse                        |    Yes    | Alert only | Detection validated |
-| Silent      | Dead neurons                         |    Yes    | Alert only | Detection validated |
-| Hardware    | GPU unavailable                      |  Partial  |  Limited   | Experimental        |
-| Distributed | DDP coordination                     |    Yes    |  Limited   | Experimental        |
+> **Scope**: All recovery claims are restricted to programmatically induced failures. Real-world/organic failures are untested. All timing measurements were conducted on CPU.
 
 ---
 
-## 2. Overhead Analysis
+## 1. Baseline Comparison
 
-### 2.1 ARC Lite — Recommended for Production
+**Protocol**: 4 methods × 5 failure types × 5 seeds = 25 scenarios per method.
+**Script**: `experiments/baseline_comparison.py`
 
-| Configuration |   Overhead   | Recovery | Checkpoint Interval |
-| :------------ | :----------: | :------: | :-----------------: |
-| **ARC Lite**  | **27% ± 3%** |   100%   |   Every 50 steps    |
-| ARC Full      |     44%      |   100%   |   Every 10 steps    |
-| Disabled      |      0%      |    —     |     Manual only     |
+| Method            | Detection | Recovery | False Pos. | Avg. Time |
+| :---------------- | :-------: | :------: | :--------: | :-------: |
+| No Protection     |   52.0%   |   0.0%   |     0      |   926ms   |
+| Gradient Clipping |   20.0%   |   0.0%   |     0      |  1297ms   |
+| Loss-Only Monitor |   80.0%   |  80.0%   |     0      |  1359ms   |
+| **Full ARC**      | **100%**  | **100%** |   **0**    |  1722ms   |
 
-Validated across three model scales with consistent results:
-
-| Model Scale | Parameters | Baseline (ms/step) | ARC Lite (ms/step) | Overhead |
-| :---------- | :--------: | :----------------: | :----------------: | :------: |
-| Small       |    60K     |        2.67        |        3.39        |   27%    |
-| Medium      |    845K    |        5.81        |        7.38        |   27%    |
-| XLarge      |   33.8M    |       129.17       |       164.05       |   27%    |
-
-### 2.2 ARC Full Mode — Reference Only
-
-When all features are enabled (every-10-step checkpointing):
-
-| Model Scale | Parameters | Overhead | Recommendation |
-| :---------- | :--------: | :------: | :------------- |
-| Small       |    60K     |   35%    | Acceptable     |
-| Medium      |    845K    |   108%   | Use Lite mode  |
-| Large       |    8.5M    |   95%    | Use Lite mode  |
-| XLarge      |   33.8M    |   93%    | Use Lite mode  |
-
-> High overhead in Full Mode is due to frequent checkpointing. ARC Lite uses every-50-step saves.
-
-### 2.3 Optimization Status
-
-| Optimization                 |   Status    | Impact               |
-| :--------------------------- | :---------: | :------------------- |
-| Quantized Checkpoints (FP16) |  Validated  | 50% memory reduction |
-| Incremental Delta Saves      | Implemented | Measurement pending  |
-| Async Detection              |   Partial   | In progress          |
-| Selective Layer Sampling     | Implemented | Measurement pending  |
-| CUDA Kernel Fusion           |   Planned   | —                    |
+**Key finding**: ARC's optimizer state monitoring catches silent failures (momentum buffer zeroing) that loss-only monitoring misses entirely.
 
 ---
 
-## 3. Memory Efficiency
+## 2. Failure Prediction
 
-### Checkpoint Strategies
+**Protocol**: 4 architectures × 5 failure types × 5 seeds × 2 labels = 200 scenarios, 5-fold CV.
+**Script**: `experiments/prediction_200_v2.py`
 
-| Strategy       | Memory Use | Speed  | Trigger          |
-| :------------- | :--------: | :----: | :--------------- |
-| Full CPU       |  3× model  |  Fast  | RAM > 4× model   |
-| Quantized FP16 | 1.5× model |  Fast  | RAM > 2× model   |
-| Incremental    | 0.3× model | Medium | RAM limited      |
-| Streaming Disk |  Minimal   |  Slow  | Very limited RAM |
+### v2 (12 features, current)
 
-### Large Model Validation
+| Classifier         |     Accuracy     | Precision | Recall  |        F1        |
+| :----------------- | :--------------: | :-------: | :-----: | :--------------: |
+| Logistic Reg (12f) |   95.5% ± 1.9%   |   100%    |  91.0%  |   0.953 ± 2.6%   |
+| **MLP (12f)**      | **97.5% ± 2.2%** | **100%**  | **95%** | **0.974 ± 2.8%** |
 
-| Model        | Parameters | Memory | Status                               |
-| :----------- | :--------: | :----: | :----------------------------------- |
-| GPT-2 Medium |    355M    | 2.8 GB | Full training validated              |
-| GPT-2 Large  |    774M    | 6.2 GB | Full training validated              |
-| GPT-2 XL     |    1.5B    | 12 GB  | Validated (quantized checkpoints)    |
-| LLaMA-7B     |     7B     | 1.5 GB | LoRA only (18M trainable parameters) |
+12 features: loss trend, loss variance, gradient mean/variance/max, weight norm change, weight variance, NaN count, **optimizer state norm change**, **loss acceleration**, **gradient entropy change**, **weight norm acceleration** (last 4 are new in v2).
 
----
+### v1 → v2 improvement
 
-## 4. Comparison with Alternatives
-
-### Head-to-Head: ARC vs torchft
-
-Identical failure injection at step 50, same model, same seed:
-
-| Failure    |     ARC v4.0     |     torchft     | Manual Checkpoint |
-| :--------- | :--------------: | :-------------: | :---------------: |
-| NaN        | Recovered (13ms) |     Crashed     |  Recovered (4ms)  |
-| Inf        | Recovered (4ms)  |     Crashed     |  Recovered (4ms)  |
-| Explosion  | 5.29 final loss  | 6.25 final loss |  6.34 final loss  |
-| **Result** |    **3 / 3**     |    **1 / 3**    |     **3 / 3**     |
-
-### Feature Comparison
-
-| Feature                |   ARC v4.0   |  torchft  |  Manual  |
-| :--------------------- | :----------: | :-------: | :------: |
-| Auto NaN/Inf Detection |     Yes      |    No     |  Manual  |
-| Auto LR Reduction      |     Yes      |    No     |    No    |
-| Distributed Recovery   | Experimental |    Yes    |    No    |
-| Setup Complexity       |   3 lines    | 50+ lines | 30 lines |
-| Memory Overhead        |     27%      |    10%    |   20%    |
-
-> **Context**: torchft is designed for distributed worker failures (process crashes, network partitions). ARC handles numeric stability (NaN, Inf, explosions). They are complementary, not competitors.
+| Metric   | v1 (8 feat, LogReg) | v2 (12 feat, MLP) |
+| :------- | :-----------------: | :---------------: |
+| Accuracy |        86.5%        |     **97.5%**     |
+| Recall   |        73.0%        |     **95.0%**     |
+| F1       |        0.844        |     **0.974**     |
 
 ---
 
-## 5. Limitations
+## 3. Ablation Study
 
-**ARC cannot handle:**
+**Protocol**: 7 failure types × 5 seeds = 35 scenarios per configuration.
+**Script**: `experiments/ablation_experiment.py`
 
-| Limitation                                    | Reason                                 |
-| :-------------------------------------------- | :------------------------------------- |
-| Failures before first checkpoint (steps 0-10) | No state to roll back to               |
-| Data corruption or adversarial poisoning      | Outside signal scope                   |
-| Silent semantic errors (wrong architecture)   | ARC monitors dynamics, not correctness |
-| Non-PyTorch frameworks                        | PyTorch-specific hooks                 |
+| Configuration             | Detection | Δ from Full |
+| :------------------------ | :-------: | :---------: |
+| Full ARC (all components) |   85.7%   |     ---     |
+| − Weight Health           |   85.7%   |    0.0%     |
+| − Gradient Monitoring     |   85.7%   |    0.0%     |
+| − Loss Monitoring         |   85.7%   |    0.0%     |
+| − Optimizer State         |   71.4%   |   −14.3%    |
+| Loss Only (baseline)      |   71.4%   |   −14.3%    |
 
-**Hardware support:**
-
-| Platform    | Status                      |
-| :---------- | :-------------------------- |
-| NVIDIA GPUs | Fully validated             |
-| AMD ROCm    | Partial, not validated      |
-| Apple MPS   | Single device, experimental |
-| CPU         | Functional, slow            |
-
-**Scale constraints:**
-
-- CPU RAM must exceed 3× model size for full checkpointing (1.5× with quantized mode)
-- 1B+ models require quantized checkpoints
-- "7B support" means LoRA fine-tuning (18M trainable parameters), not full training
+**Interpretation**: Weight/gradient/loss monitoring provide redundant coverage (defense-in-depth). Optimizer state monitoring is uniquely valuable for silent failures. The 14.3% undetected by Full ARC are silent corruption scenarios too subtle for any threshold-based detector.
 
 ---
 
-## 6. Reproducibility
+## 4. Overhead Analysis
 
-```bash
-pip install -e .
+**Protocol**: Median of 100 iterations, `time.perf_counter`, CPU.
+**Script**: `experiments/overhead_measurement.py`
 
-python experiments/statistical_validation.py       # 200-run statistical test
-python experiments/comprehensive_benchmark.py      # full benchmark suite
-python experiments/overhead_ablation.py            # overhead measurement
-python experiments/sota_comparison.py              # torchft comparison
-```
+### Per-Component Timing (288K-parameter CNN)
 
-| Component | Specification             |
-| :-------- | :------------------------ |
-| GPU       | NVIDIA RTX 3090 24GB      |
-| CUDA      | 11.8                      |
-| PyTorch   | 2.1.0                     |
-| Python    | 3.9+                      |
-| OS        | Ubuntu 22.04 / Windows 11 |
+| Component           | Time (ms) | % of ARC Total |
+| :------------------ | :-------: | :------------: |
+| Gradient Norm       |   0.12    |      9.0%      |
+| Weight Statistics   |   1.06    |     76.9%      |
+| Loss Analysis       |   0.01    |      0.6%      |
+| Checkpoint (amort.) |   0.13    |      9.6%      |
+| Forecasting         |   0.06    |      4.1%      |
+| **Total ARC**       | **1.38**  |    **100%**    |
 
-All results saved to JSON with seeds, timestamps, and hardware metadata.
+Weight statistics (norm computation + NaN/Inf check) dominates at 77%.
 
----
+### Relative Overhead by Model Scale
 
-## 7. Summary of Claims
+| Model      | Parameters | ARC (ms) | Baseline (ms) | Relative |
+| :--------- | :--------: | :------: | :-----------: | :------: |
+| Small MLP  |    50K     |   0.86   |     1.45      |   ~60%   |
+| Medium CNN |    288K    |   1.38   |     14.17     |   ~10%   |
+| Large CNN  |    2.5M    |   7.04   |     74.24     |  ~9.5%   |
 
-| Claim                             |     Status     | Evidence                            |
-| :-------------------------------- | :------------: | :---------------------------------- |
-| 100% recovery on numeric failures |   Validated    | 10 seeds × 4 arch, p < 0.001        |
-| Better than torchft on numeric    |   Validated    | 3/3 vs 1/3, identical conditions    |
-| 27% overhead (ARC Lite)           |   Validated    | Ablation study, 3 model scales      |
-| 1.5B parameter support            |   Validated    | GPT-2 XL with quantized checkpoints |
-| 7B parameter support              |   LoRA only    | Full training not validated         |
-| Silent failure detection          | Detection only | Recovery validation pending         |
-| Multi-GPU support                 |  Experimental  | Production testing needed           |
+Overhead decreases with model size because forward/backward cost grows superlinearly while monitoring is O(n).
+
+> **Note**: All measurements on CPU. GPU deployments would show lower relative overhead.
 
 ---
 
-<div align="center">
+## 5. Large Model Stress Test
 
-_ARC v4.0 Technical Report · Aryan Kaushik · 2026_
+**Protocol**: Models trained 20 steps for stable baseline, failure injected at step 20, recovery verified by finite loss + return to 2× pre-failure baseline within 10 steps.
+**Script**: `experiments/validate_claims_phase2.py`
 
-</div>
+| Model        | Params | Failure Type        | Recovery | Rollbacks |
+| :----------- | :----- | :------------------ | :------: | :-------: |
+| NanoGPT      | 10M    | LR Spike (50×)      |    ✓     |     2     |
+| ResNet-50    | 25.6M  | Loss Singularity    |    ✓     |     1     |
+| YOLOv11      | 30M    | Catastrophic LR     |    ✓     |     3     |
+| GPT-2 Small  | 50M    | NaN Bomb            |    ✓     |     4     |
+| SD-UNet      | 60M    | Gradient Apocalypse |    ✓     |     4     |
+| Wide ResNet  | 68M    | Loss Supernova      |    ✓     |     3     |
+| Llama-style  | 70M    | Catastrophic LR     |    ✓     |     5     |
+| ViT-Base     | 86M    | Inf Nuke            |    ✓     |     1     |
+| GPT-2 Medium | 117M   | NaN Bomb            |    ✓     |     3     |
+
+100% recovery across all 9 models, all with programmatically injected failures.
+
+---
+
+## 6. What's Not Validated
+
+| Claim                | Status                                                                                     |
+| :------------------- | :----------------------------------------------------------------------------------------- |
+| GPU overhead         | Untested — all measurements on CPU                                                         |
+| Scale >117M          | Untested — behaviour at 1B+ unknown                                                        |
+| Organic failures     | Untested — all failures injected programmatically                                          |
+| Distributed training | Untested — single-process only                                                             |
+| Non-CIFAR datasets   | Limited — stress tests use domain-appropriate data but prediction experiments use CIFAR-10 |

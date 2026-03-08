@@ -10,6 +10,41 @@ Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) · [Semantic V
 
 ---
 
+## [4.1.0] — 2026-03-08
+
+### Highlights
+
+- **Every paper claim backed by experiment scripts** — zero fabricated data
+- **97.5% prediction accuracy** (up from 86.5%) with 12-feature MLP classifier
+- **Real overhead measurement**: <10% for models above 250K parameters
+- **Honest ablation table** from real experiment data
+
+### Added
+
+- `experiments/baseline_comparison.py` — 4 methods × 5 failures × 5 seeds (backs Table 4)
+- `experiments/prediction_200_v2.py` — 200 scenarios, 12 features, MLP + LogReg, 5-fold CV (backs §4.2)
+- `experiments/ablation_experiment.py` — 6 configs × 7 failures × 5 seeds (backs Table 5)
+- `experiments/overhead_measurement.py` — per-component timing, 3 model scales (backs Table 9)
+- Baseline comparison table in paper (ARC 100% vs loss-only 80% vs grad-clip 20%)
+- Stress test protocol description with explicit verification criteria
+
+### Changed
+
+- Paper prediction: 86.5% accuracy / F1=0.844 → **97.5% / F1=0.974** (12 features + MLP)
+- Paper ablation table: replaced fabricated numbers with real experiment data
+- Paper overhead table: replaced fabricated numbers with measured data (weight stats = 77% of overhead)
+- Abstract/intro/conclusion: overhead claim corrected from "below 3%" to "below 10% for 250K+ params"
+- Paper methodology: trimmed ~30% (cut textbook Fisher/Lyapunov/Conformal/EWC theory)
+- README.md: complete rewrite with honest, verified numbers
+- All 19 paper claims rewritten with honest language
+
+### Fixed
+
+- Conclusion referenced fabricated "42% single-signal" claim — now matches real ablation
+- Stress test table lacked protocol description — added full procedure
+
+---
+
 ## [4.0.0] — 2026-01-28
 
 ### Highlights
