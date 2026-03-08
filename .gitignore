@@ -46,3 +46,21 @@ experiments/benchmark_*/
 
 # Jupyter
 .ipynb_checkpoints/
+
+# Result JSON files (regeneratable via experiments/)
+*_results.json
+experiments/*_results.json
+
+# Generated figures (regeneratable via experiments/)
+experiments/figures/*.png
+experiments/figures/*.pdf
+
+# Release/deploy scripts
+release.sh
+
+# Temp files
+tmp_*/
+*.tmp
+
+# Build artifacts
+arc_training-*/
