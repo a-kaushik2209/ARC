@@ -15,7 +15,7 @@ _Real-time fault tolerance that monitors, predicts, and recovers from training f
 
 **3 lines of code** · **<10% overhead (250K+ params)** · **100% recovery on induced failures** · **100K–117M parameters validated**
 
-[Quick Start](#quick-start) · [Architecture](#architecture) · [Benchmarks](#benchmarks) · [Paper](#paper)
+[Quick Start](#quick-start) · [Architecture](#architecture) · [Benchmarks](#benchmarks)
 
 </div>
 
@@ -236,43 +236,6 @@ ARC is honest about what it cannot do:
 - **First 10 steps**: No checkpoint exists yet — failures before the first save are unrecoverable
 - **Data problems**: ARC cannot detect data corruption, label noise, or adversarial poisoning
 - **Non-PyTorch**: Only PyTorch is supported
-
----
-
-## Reproducibility
-
-All benchmark results are fully reproducible:
-
-```bash
-git clone https://github.com/a-kaushik2209/ARC.git
-cd ARC
-pip install -r requirements.txt
-
-# Core experiments
-python experiments/baseline_comparison.py       # Baseline comparison (4 methods × 25 scenarios)
-python experiments/prediction_200_v2.py         # Failure prediction (200 scenarios, 5-fold CV)
-python experiments/ablation_experiment.py       # Ablation study (6 configs × 35 scenarios)
-python experiments/overhead_measurement.py      # Per-component overhead timing
-
-# Validation
-python experiments/validate_claims.py           # 9-claim validation suite
-python experiments/validate_claims_phase2.py    # 6-claim validation + large model tests
-```
-
-Results are saved as JSON files with seeds for reproducibility.
-
-**Environment**: Python 3.9+ · PyTorch 2.1+ · CPU validated, GPU supported
-
----
-
-## Paper
-
-The research paper (`sn-article.tex`) documents ARC's methodology and results:
-
-- **Every table** in the paper has a backing experiment script
-- **Every claim** has been validated with fixed-seed experiments
-- **All limitations** are explicitly acknowledged
-- Rating: **8.5/10** — fully honest, all data backed by reproducible code
 
 ---
 
