@@ -53,6 +53,16 @@ class SignalConfig:
     track_effective_rank: bool = True
     effective_rank_sample_size: int = 100
 
+    def __post_init__(self):
+        if not (0 < self.activation_sample_ratio <= 1):
+            raise ValueError(
+                f"activation_sample_ratio must be in (0, 1], got {self.activation_sample_ratio}"
+            )
+        if self.collect_every_n_steps < 1:
+            raise ValueError(
+                f"collect_every_n_steps must be >= 1, got {self.collect_every_n_steps}"
+            )
+
 @dataclass
 class FeatureConfig:
 
@@ -65,6 +75,16 @@ class FeatureConfig:
 
     compute_correlations: bool = True
     correlation_pairs: Optional[List[tuple]] = None
+
+    def __post_init__(self):
+        if self.window_size <= 0:
+            raise ValueError(
+                f"window_size must be > 0, got {self.window_size}"
+            )
+        if self.min_history < 1:
+            raise ValueError(
+                f"min_history must be >= 1, got {self.min_history}"
+            )
 
 @dataclass
 class PredictionConfig:
@@ -82,6 +102,20 @@ class PredictionConfig:
 
     high_risk_threshold: float = 0.7
     medium_risk_threshold: float = 0.4
+
+    def __post_init__(self):
+        if not (0 <= self.dropout_rate <= 1):
+            raise ValueError(
+                f"dropout_rate must be in [0, 1], got {self.dropout_rate}"
+            )
+        if not (0 < self.confidence_level <= 1):
+            raise ValueError(
+                f"confidence_level must be in (0, 1], got {self.confidence_level}"
+            )
+        if self.mc_dropout_samples < 1:
+            raise ValueError(
+                f"mc_dropout_samples must be >= 1, got {self.mc_dropout_samples}"
+            )
 
 @dataclass
 class FailureThresholds:
@@ -101,6 +135,22 @@ class FailureThresholds:
     overfit_gap_threshold: float = 0.5
     overfit_val_plateau_epochs: int = 10
 
+    def __post_init__(self):
+        if self.loss_explosion_factor <= 0:
+            raise ValueError(
+                f"loss_explosion_factor must be > 0, got {self.loss_explosion_factor}"
+            )
+        _positive_thresholds = [
+            ("vanishing_grad_threshold", self.vanishing_grad_threshold),
+            ("exploding_grad_threshold", self.exploding_grad_threshold),
+            ("activation_similarity_threshold", self.activation_similarity_threshold),
+            ("effective_rank_collapse_ratio", self.effective_rank_collapse_ratio),
+            ("overfit_gap_threshold", self.overfit_gap_threshold),
+        ]
+        for _name, _value in _positive_thresholds:
+            if _value <= 0:
+                raise ValueError(f"{_name} must be positive, got {_value}")
+
 @dataclass
 class OverheadConfig:
 
@@ -112,6 +162,16 @@ class OverheadConfig:
     reduce_activation_sampling: bool = True
     disable_curvature_proxy: bool = True
     reduce_mc_samples: bool = True
+
+    def __post_init__(self):
+        if self.max_overhead_percent < 0:
+            raise ValueError(
+                f"max_overhead_percent must be >= 0, got {self.max_overhead_percent}"
+            )
+        if self.overhead_check_interval < 1:
+            raise ValueError(
+                f"overhead_check_interval must be >= 1, got {self.overhead_check_interval}"
+            )
 
 @dataclass
 class Config:

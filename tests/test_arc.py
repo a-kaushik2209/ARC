@@ -396,6 +396,231 @@ class TestArcV2AutoLargeModel:
 
 
 # =============================================================================
+# Config Numeric Validation Tests  (Issue #2)
+# =============================================================================
+
+class TestConfigValidation:
+    """
+    Tests for __post_init__ numeric validation added to config dataclasses.
+
+    Covers:
+      - SignalConfig: activation_sample_ratio, collect_every_n_steps
+      - FeatureConfig: window_size, min_history
+      - PredictionConfig: dropout_rate, confidence_level, mc_dropout_samples
+      - FailureThresholds: loss_explosion_factor, numeric threshold fields
+      - OverheadConfig: max_overhead_percent, overhead_check_interval
+      - Config.from_dict() propagates ValueError for invalid nested values
+      - Default Config(), Config.low_overhead(), Config.high_accuracy() still pass
+    """
+
+    # ------------------------------------------------------------------
+    # SignalConfig
+    # ------------------------------------------------------------------
+
+    def test_signal_ratio_zero_raises(self):
+        from arc.config import SignalConfig
+        with pytest.raises(ValueError, match="activation_sample_ratio"):
+            SignalConfig(activation_sample_ratio=0.0)
+
+    def test_signal_ratio_negative_raises(self):
+        from arc.config import SignalConfig
+        with pytest.raises(ValueError, match="activation_sample_ratio"):
+            SignalConfig(activation_sample_ratio=-0.1)
+
+    def test_signal_ratio_above_one_raises(self):
+        from arc.config import SignalConfig
+        with pytest.raises(ValueError, match="activation_sample_ratio"):
+            SignalConfig(activation_sample_ratio=1.5)
+
+    def test_signal_ratio_exactly_one_valid(self):
+        """Boundary: ratio == 1.0 must be accepted (spec is (0, 1])."""
+        from arc.config import SignalConfig
+        cfg = SignalConfig(activation_sample_ratio=1.0)
+        assert cfg.activation_sample_ratio == 1.0
+
+    def test_signal_collect_steps_zero_raises(self):
+        from arc.config import SignalConfig
+        with pytest.raises(ValueError, match="collect_every_n_steps"):
+            SignalConfig(collect_every_n_steps=0)
+
+    def test_signal_collect_steps_negative_raises(self):
+        from arc.config import SignalConfig
+        with pytest.raises(ValueError, match="collect_every_n_steps"):
+            SignalConfig(collect_every_n_steps=-1)
+
+    # ------------------------------------------------------------------
+    # FeatureConfig
+    # ------------------------------------------------------------------
+
+    def test_feature_window_size_zero_raises(self):
+        from arc.config import FeatureConfig
+        with pytest.raises(ValueError, match="window_size"):
+            FeatureConfig(window_size=0)
+
+    def test_feature_window_size_negative_raises(self):
+        from arc.config import FeatureConfig
+        with pytest.raises(ValueError, match="window_size"):
+            FeatureConfig(window_size=-1)
+
+    def test_feature_min_history_zero_raises(self):
+        from arc.config import FeatureConfig
+        with pytest.raises(ValueError, match="min_history"):
+            FeatureConfig(min_history=0)
+
+    def test_feature_min_history_negative_raises(self):
+        from arc.config import FeatureConfig
+        with pytest.raises(ValueError, match="min_history"):
+            FeatureConfig(min_history=-5)
+
+    # ------------------------------------------------------------------
+    # PredictionConfig
+    # ------------------------------------------------------------------
+
+    def test_prediction_dropout_negative_raises(self):
+        from arc.config import PredictionConfig
+        with pytest.raises(ValueError, match="dropout_rate"):
+            PredictionConfig(dropout_rate=-0.1)
+
+    def test_prediction_dropout_above_one_raises(self):
+        from arc.config import PredictionConfig
+        with pytest.raises(ValueError, match="dropout_rate"):
+            PredictionConfig(dropout_rate=1.5)
+
+    def test_prediction_dropout_zero_valid(self):
+        """Boundary: dropout_rate == 0.0 must be accepted (spec is [0, 1])."""
+        from arc.config import PredictionConfig
+        cfg = PredictionConfig(dropout_rate=0.0)
+        assert cfg.dropout_rate == 0.0
+
+    def test_prediction_confidence_zero_raises(self):
+        from arc.config import PredictionConfig
+        with pytest.raises(ValueError, match="confidence_level"):
+            PredictionConfig(confidence_level=0.0)
+
+    def test_prediction_confidence_above_one_raises(self):
+        from arc.config import PredictionConfig
+        with pytest.raises(ValueError, match="confidence_level"):
+            PredictionConfig(confidence_level=1.1)
+
+    def test_prediction_confidence_exactly_one_valid(self):
+        """Boundary: confidence_level == 1.0 must be accepted (spec is (0, 1])."""
+        from arc.config import PredictionConfig
+        cfg = PredictionConfig(confidence_level=1.0)
+        assert cfg.confidence_level == 1.0
+
+    def test_prediction_mc_samples_zero_raises(self):
+        from arc.config import PredictionConfig
+        with pytest.raises(ValueError, match="mc_dropout_samples"):
+            PredictionConfig(mc_dropout_samples=0)
+
+    def test_prediction_mc_samples_negative_raises(self):
+        from arc.config import PredictionConfig
+        with pytest.raises(ValueError, match="mc_dropout_samples"):
+            PredictionConfig(mc_dropout_samples=-1)
+
+    # ------------------------------------------------------------------
+    # FailureThresholds
+    # ------------------------------------------------------------------
+
+    def test_thresholds_loss_factor_zero_raises(self):
+        from arc.config import FailureThresholds
+        with pytest.raises(ValueError, match="loss_explosion_factor"):
+            FailureThresholds(loss_explosion_factor=0.0)
+
+    def test_thresholds_loss_factor_negative_raises(self):
+        from arc.config import FailureThresholds
+        with pytest.raises(ValueError, match="loss_explosion_factor"):
+            FailureThresholds(loss_explosion_factor=-1.0)
+
+    def test_thresholds_vanishing_grad_nonpositive_raises(self):
+        from arc.config import FailureThresholds
+        with pytest.raises(ValueError, match="vanishing_grad_threshold"):
+            FailureThresholds(vanishing_grad_threshold=0.0)
+
+    def test_thresholds_exploding_grad_nonpositive_raises(self):
+        from arc.config import FailureThresholds
+        with pytest.raises(ValueError, match="exploding_grad_threshold"):
+            FailureThresholds(exploding_grad_threshold=-1.0)
+
+    def test_thresholds_activation_similarity_nonpositive_raises(self):
+        from arc.config import FailureThresholds
+        with pytest.raises(ValueError, match="activation_similarity_threshold"):
+            FailureThresholds(activation_similarity_threshold=0.0)
+
+    def test_thresholds_effective_rank_nonpositive_raises(self):
+        from arc.config import FailureThresholds
+        with pytest.raises(ValueError, match="effective_rank_collapse_ratio"):
+            FailureThresholds(effective_rank_collapse_ratio=-0.1)
+
+    def test_thresholds_overfit_gap_nonpositive_raises(self):
+        from arc.config import FailureThresholds
+        with pytest.raises(ValueError, match="overfit_gap_threshold"):
+            FailureThresholds(overfit_gap_threshold=0.0)
+
+    # ------------------------------------------------------------------
+    # OverheadConfig
+    # ------------------------------------------------------------------
+
+    def test_overhead_percent_negative_raises(self):
+        from arc.config import OverheadConfig
+        with pytest.raises(ValueError, match="max_overhead_percent"):
+            OverheadConfig(max_overhead_percent=-1.0)
+
+    def test_overhead_percent_zero_valid(self):
+        """Boundary: max_overhead_percent == 0.0 must be accepted (spec is >= 0)."""
+        from arc.config import OverheadConfig
+        cfg = OverheadConfig(max_overhead_percent=0.0)
+        assert cfg.max_overhead_percent == 0.0
+
+    def test_overhead_interval_zero_raises(self):
+        from arc.config import OverheadConfig
+        with pytest.raises(ValueError, match="overhead_check_interval"):
+            OverheadConfig(overhead_check_interval=0)
+
+    def test_overhead_interval_negative_raises(self):
+        from arc.config import OverheadConfig
+        with pytest.raises(ValueError, match="overhead_check_interval"):
+            OverheadConfig(overhead_check_interval=-10)
+
+    # ------------------------------------------------------------------
+    # Config.from_dict() propagation
+    # ------------------------------------------------------------------
+
+    def test_from_dict_invalid_signal_ratio_raises(self):
+        """Config.from_dict() must propagate ValueError for invalid nested values."""
+        from arc.config import Config
+        with pytest.raises(ValueError, match="activation_sample_ratio"):
+            Config.from_dict({"signal": {"activation_sample_ratio": -1.0}})
+
+    def test_from_dict_invalid_dropout_raises(self):
+        from arc.config import Config
+        with pytest.raises(ValueError, match="dropout_rate"):
+            Config.from_dict({"prediction": {"dropout_rate": 2.0}})
+
+    # ------------------------------------------------------------------
+    # Preset smoke tests — must NOT raise
+    # ------------------------------------------------------------------
+
+    def test_default_config_passes(self):
+        """Config() with all defaults must construct without error."""
+        from arc.config import Config
+        cfg = Config()
+        assert cfg is not None
+
+    def test_low_overhead_preset_passes(self):
+        """Config.low_overhead() must construct without error."""
+        from arc.config import Config
+        cfg = Config.low_overhead()
+        assert cfg is not None
+
+    def test_high_accuracy_preset_passes(self):
+        """Config.high_accuracy() must construct without error."""
+        from arc.config import Config
+        cfg = Config.high_accuracy()
+        assert cfg is not None
+
+
+# =============================================================================
 # Run Tests
 # =============================================================================
 
