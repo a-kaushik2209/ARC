@@ -390,7 +390,7 @@ class AdaptiveCheckpointer:
             except TypeError:
                 # PyTorch <1.13 doesn't support weights_only; fall back transparently
                 checkpoint = torch.load(_ckpt_path)
-            except (pickle.UnpicklingError, RuntimeError):
+            except pickle.UnpicklingError:
                 warnings.warn(
                     f"Loading {_ckpt_path} with weights_only=False. "
                     "Only do this for checkpoints you produced yourself. "

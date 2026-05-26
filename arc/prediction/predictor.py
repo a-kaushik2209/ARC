@@ -150,7 +150,7 @@ class FailurePredictor:
         except TypeError:
             # PyTorch <1.13 doesn't support weights_only; fall back transparently
             checkpoint = torch.load(path, map_location=self.device)
-        except (pickle.UnpicklingError, RuntimeError):
+        except pickle.UnpicklingError:
             warnings.warn(
                 f"Loading {path} with weights_only=False. "
                 "Only do this for checkpoints you produced yourself. "
