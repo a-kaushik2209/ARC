@@ -103,7 +103,7 @@ FAILURES = {
     'lr_spike': inject_lr_spike,
 }
 
-# ─── Optimizer State Monitoring ────────────────────────────────────────────
+# ─── Helper Analytics Metrics ──────────────────────────────────────────────
 def get_optimizer_state_norm(optimizer):
     total_norm = 0.0
     count = 0
@@ -112,6 +112,63 @@ def get_optimizer_state_norm(optimizer):
             total_norm += state['momentum_buffer'].norm(2).item() ** 2
             count += 1
     return math.sqrt(total_norm) if count > 0 else -1.0
+
+def calculate_weight_norm(model):
+    wnorm = 0.0
+    for p in model.parameters():
+        wnorm += p.data.norm(2).item() ** 2
+    return math.sqrt(wnorm)
+
+def calculate_gradient_norm(model):
+    gnorm = 0.0
+    for p in model.parameters():
+        if p.grad is not None:
+            gnorm += p.grad.data.norm(2).item() ** 2
+    return math.sqrt(gnorm)
+
+
+# ─── Refactored Isolated Monitoring Sub-routines ─────────────────────────────
+def check_weight_health(model, bl_wnorm):
+    """Validates structural weight parameters for NaNs, Infs, or sudden drift."""
+    for p in model.parameters():
+        if torch.isnan(p.data).any() or torch.isinf(p.data).any():
+            return True
+            
+    curr_wnorm = calculate_weight_norm(model)
+    if abs(curr_wnorm - bl_wnorm) / max(bl_wnorm, 1e-8) > 5.0:
+        return True
+    return False
+
+def check_optimizer_forecasting(optimizer, bl_opt):
+    """Validates optimizer tracking states to catch structural anomalies."""
+    if bl_opt <= 0:
+        return False
+        
+    curr_opt = get_optimizer_state_norm(optimizer)
+    if curr_opt >= 0:
+        if curr_opt < bl_opt * 0.01 or abs(curr_opt - bl_opt) / max(bl_opt, 1e-8) > 10.0:
+            return True
+    return False
+
+def check_loss_anomaly(loss, loss_val, bl_loss):
+    """Evaluates whether the loss value has exploded or turned into a NaN context."""
+    if torch.isnan(loss) or torch.isinf(loss):
+        return True
+    if loss_val > max(bl_loss * 3.0, 10.0):
+        return True
+    return False
+
+def check_gradient_anomaly(model, bl_gnorm):
+    """Monitors incoming backpropagation gradients for numerical instability."""
+    for p in model.parameters():
+        if p.grad is not None and (torch.isnan(p.grad).any() or torch.isinf(p.grad).any()):
+            return True
+            
+    gnorm = calculate_gradient_norm(model)
+    if gnorm > bl_gnorm * 100:
+        return True
+    return False
+
 
 # ─── Configurable ARC Detection ───────────────────────────────────────────
 def run_arc_detection(model, optimizer, criterion, loader_iter, failure_fn,
@@ -123,33 +180,24 @@ def run_arc_detection(model, optimizer, criterion, loader_iter, failure_fn,
     Run training with configurable ARC components.
     Returns True if failure was DETECTED.
     """
-    losses = []
-    grad_norms = []
-    weight_norms = []
-    opt_norms = []
+    losses, grad_norms, weight_norms, opt_norms = [], [], [], []
     
-    # Warmup: 20 steps
+    # Warmup Loop Phase (20 steps)
     for step in range(20):
         x, y = next(loader_iter)
         x, y = x.to(DEVICE), y.to(DEVICE)
         optimizer.zero_grad()
         out = model(x)
         loss = criterion(out, y)
+        
         if torch.isnan(loss) or torch.isinf(loss):
-            return True  # detected during warmup
+            return True  # Detected anomaly immediately during warmup
+            
         losses.append(loss.item())
         loss.backward()
         
-        gnorm = 0.0
-        for p in model.parameters():
-            if p.grad is not None:
-                gnorm += p.grad.data.norm(2).item() ** 2
-        grad_norms.append(math.sqrt(gnorm))
-        
-        wnorm = 0.0
-        for p in model.parameters():
-            wnorm += p.data.norm(2).item() ** 2
-        weight_norms.append(math.sqrt(wnorm))
+        grad_norms.append(calculate_gradient_norm(model))
+        weight_norms.append(calculate_weight_norm(model))
         
         optimizer.step()
         
@@ -157,75 +205,52 @@ def run_arc_detection(model, optimizer, criterion, loader_iter, failure_fn,
         if osn >= 0:
             opt_norms.append(osn)
     
-    # Baselines
+    # Establish Baselining Metrics
     bl_loss = np.mean(losses[-5:]) if losses else 2.5
     bl_gnorm = np.mean(grad_norms[-5:]) if grad_norms else 1.0
     bl_wnorm = np.mean(weight_norms[-5:]) if weight_norms else 1.0
     bl_opt = np.mean(opt_norms[-5:]) if opt_norms else -1.0
     
-    # Inject failure
+    # Inject targeting fault anomaly
     failure_fn(model, optimizer)
     
-    # Monitor for 30 more steps
+    # Evaluation Monitoring Loop Phase (30 steps)
     for step in range(30):
         x, y = next(loader_iter)
         x, y = x.to(DEVICE), y.to(DEVICE)
         optimizer.zero_grad()
         
-        # 1. Weight health check
-        if use_weight_health:
-            for p in model.parameters():
-                if torch.isnan(p.data).any() or torch.isinf(p.data).any():
-                    return True
-            curr_wnorm = 0.0
-            for p in model.parameters():
-                curr_wnorm += p.data.norm(2).item() ** 2
-            curr_wnorm = math.sqrt(curr_wnorm)
-            if abs(curr_wnorm - bl_wnorm) / max(bl_wnorm, 1e-8) > 5.0:
-                return True
+        # 1. Component Evaluation: Weight Health Validation
+        if use_weight_health and check_weight_health(model, bl_wnorm):
+            return True
         
-        # 2. Optimizer state check (forecasting proxy)
-        if use_forecasting and bl_opt > 0:
-            curr_opt = get_optimizer_state_norm(optimizer)
-            if curr_opt >= 0:
-                if curr_opt < bl_opt * 0.01:
-                    return True
-                if abs(curr_opt - bl_opt) / max(bl_opt, 1e-8) > 10.0:
-                    return True
+        # 2. Component Evaluation: Optimizer Velocity Tracking
+        if use_forecasting and check_optimizer_forecasting(optimizer, bl_opt):
+            return True
         
         try:
             out = model(x)
             loss = criterion(out, y)
             loss_val = loss.item()
             
-            # 3. Loss monitoring
-            if use_loss_monitor:
-                if torch.isnan(loss) or torch.isinf(loss):
-                    return True
-                if loss_val > max(bl_loss * 3.0, 10.0):
-                    return True
+            # 3. Component Evaluation: Target Loss Verification
+            if use_loss_monitor and check_loss_anomaly(loss, loss_val, bl_loss):
+                return True
             
             loss.backward()
             
-            # 4. Gradient monitoring
-            if use_gradient_monitor:
-                gnorm = 0.0
-                for p in model.parameters():
-                    if p.grad is not None:
-                        if torch.isnan(p.grad).any() or torch.isinf(p.grad).any():
-                            return True
-                        gnorm += p.grad.data.norm(2).item() ** 2
-                gnorm = math.sqrt(gnorm)
-                if gnorm > bl_gnorm * 100:
-                    return True
+            # 4. Component Evaluation: Backpropagation Gradient Verification
+            if use_gradient_monitor and check_gradient_anomaly(model, bl_gnorm):
+                return True
             
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
             
         except RuntimeError:
             return True
-    
-    return False  # not detected
+            
+    return False  # Failure was not caught by any enabled active tracker
+
 
 # ─── Loss-Only Baseline ──────────────────────────────────────────────────
 def run_loss_only(model, optimizer, criterion, loader_iter, failure_fn):
@@ -266,7 +291,7 @@ def run_loss_only(model, optimizer, criterion, loader_iter, failure_fn):
     return False
 
 
-# ─── Main ─────────────────────────────────────────────────────────────────
+# ─── Main Execution Workflow ───────────────────────────────────────────────
 def main():
     print("=" * 70)
     print("  ABLATION EXPERIMENT — Component Detection Impact")
@@ -333,7 +358,7 @@ def main():
     results['Loss Only (baseline)'] = {'detected': detected, 'total': total, 'rate': round(rate, 1)}
     print(f"    Detection: {detected}/{total} = {rate:.1f}%")
     
-    # Summary
+    # Summary Table Construction
     print(f"\n{'=' * 70}")
     print(f"  ABLATION RESULTS ({total_scenarios} scenarios each)")
     print(f"{'=' * 70}")
@@ -344,6 +369,7 @@ def main():
     for name, r in results.items():
         delta = r['rate'] - full_rate
         delta_str = f"{delta:+.1f}%" if name != 'Full ARC (all)' else '---'
+        delta_str = '---' if name == 'Full ARC (all)' else f"{delta:+.1f}%"
         print(f"  {name:<30s} {r['rate']:>9.1f}% {delta_str:>12s}")
     
     with open('experiments/ablation_results.json', 'w') as f:
