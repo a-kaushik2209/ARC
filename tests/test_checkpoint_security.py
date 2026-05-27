@@ -166,8 +166,8 @@ def test_failure_predictor_attempts_weights_only(tmp_path: Path) -> None:
     with patch("arc.prediction.predictor.torch.load", side_effect=spy):
         try:
             fp._load_model(str(safe_path))
-        except Exception:
-            pass  # expected — stub checkpoint lacks the keys downstream code needs
+        except KeyError:
+            pass  # expected — stub state_dict lacks "input_proj.0.weight" for shape inference
 
     assert captured, "FailurePredictor._load_model never called torch.load"
     assert captured[0].get("weights_only") is True, (
@@ -201,9 +201,9 @@ def test_adaptive_checkpointer_attempts_weights_only(tmp_path: Path) -> None:
     with patch("arc.checkpointing.adaptive.torch.load", side_effect=spy):
         try:
             cp.restore(0)
-        except Exception:
-            pass  # restore() does additional bookkeeping post-load; we only
-                # care that torch.load itself was invoked correctly
+        except AttributeError:
+            pass  # expected — __new__'d instance lacks self.config/self.model
+                # that restore() touches after the load completes
 
     assert captured, "AdaptiveCheckpointer.restore never called torch.load"
     assert captured[0].get("weights_only") is True, (
