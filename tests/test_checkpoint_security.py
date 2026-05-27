@@ -1,24 +1,40 @@
 """Regression test for ARC issue #8 — checkpoint pickle RCE.
 
-ARC loads checkpoints via ``torch.load()``, which deserializes with
-Python's ``pickle`` protocol and can execute arbitrary code through the
-``__reduce__`` mechanism. This test verifies that ARC's safe-load path
-(``torch.load(..., weights_only=True)``) refuses to deserialize a
-malicious pickle.
+Two layers of tests:
 
-The fallback path (``weights_only=False``) is intentionally permissive
-for backward compatibility with checkpoints that include optimizer
-state or other non-tensor objects, and is not exercised here. See
-SECURITY.md for the full trust boundary.
+1. Low-level PyTorch sanity (test_malicious_pickle_blocked_by_weights_only,
+   test_safe_checkpoint_loads_with_weights_only): verify the upstream
+   ``torch.load(..., weights_only=True)`` flag itself rejects malicious
+   pickles and accepts tensor-only checkpoints. These are baseline checks
+   on the PyTorch contract ARC relies on.
+
+2. ARC wrapper guards (test_meta_model_trainer_attempts_weights_only,
+   test_failure_predictor_attempts_weights_only,
+   test_adaptive_checkpointer_attempts_weights_only): spy on the
+   ``torch.load`` calls made by each of ARC's three checkpoint-loading
+   wrappers and verify the first attempt always uses ``weights_only=True``.
+   If a future refactor drops or weakens the flag in any wrapper, the
+   corresponding test fails.
+
+The fallback path (``weights_only=False`` after ``pickle.UnpicklingError``
+or a recognised ``RuntimeError``) is intentionally permissive for backward
+compatibility with checkpoints that include optimizer state or other
+non-tensor objects. See SECURITY.md for the full trust boundary.
 """
 
 from __future__ import annotations
 
 import pickle
 from pathlib import Path
+from unittest.mock import patch
 
 import torch
+import torch.nn as nn
 
+
+# ────────────────────────────────────────────────────────────
+# Layer 1: low-level PyTorch sanity
+# ────────────────────────────────────────────────────────────
 
 def test_malicious_pickle_blocked_by_weights_only(tmp_path: Path) -> None:
     """A pickle whose ``__reduce__`` would call ``open()`` to create a
@@ -40,14 +56,9 @@ def test_malicious_pickle_blocked_by_weights_only(tmp_path: Path) -> None:
         def __reduce__(self):
             return (open, (str(sentinel), "w"))
 
-    # Write a checkpoint-shaped pickle that hides the exploit in a key
-    # ARC code paths actually read.
     with open(malicious_path, "wb") as f:
         pickle.dump({"model_state_dict": Exploit()}, f)
 
-    # weights_only=True is expected to refuse this file. The exact
-    # exception type varies across PyTorch versions; what we care about
-    # is that the payload is NOT executed.
     try:
         torch.load(str(malicious_path), weights_only=True)
     except Exception:
@@ -71,3 +82,131 @@ def test_safe_checkpoint_loads_with_weights_only(tmp_path: Path) -> None:
     loaded = torch.load(str(safe_path), weights_only=True)
     assert "weight" in loaded
     assert torch.equal(loaded["weight"], expected_tensor)
+
+
+# ────────────────────────────────────────────────────────────
+# Layer 2: ARC wrapper guards
+#
+# Each test spies on ``torch.load`` via ``unittest.mock.patch`` and
+# verifies the first call from the wrapper used ``weights_only=True``.
+# If a future refactor removes the kwarg, the spy records ``None`` and
+# the assertion fails. Wrapper instances are built via ``__new__`` so
+# we don't have to satisfy the full ``__init__`` of large training
+# classes — only the attributes the load path actually touches.
+# ────────────────────────────────────────────────────────────
+
+def _record_torch_load_kwargs(module_dotted_path: str):
+    """Build a (spy_callable, captured_kwargs_list) pair that delegates
+    to the real ``torch.load`` while recording each call's kwargs.
+
+    Used as the ``side_effect`` for ``unittest.mock.patch``. The patch
+    target is the wrapper module's reference to ``torch.load`` — e.g.
+    ``arc.learning.trainer.torch.load`` — so other modules are unaffected.
+    """
+    captured: list[dict] = []
+    original_load = torch.load
+
+    def spy(*args, **kwargs):
+        captured.append(dict(kwargs))
+        return original_load(*args, **kwargs)
+
+    return spy, captured, module_dotted_path
+
+
+def test_meta_model_trainer_attempts_weights_only(tmp_path: Path) -> None:
+    """``MetaModelTrainer.load_checkpoint`` must call ``torch.load`` with
+    ``weights_only=True`` on the first attempt. Regression guard against
+    future refactors that drop or weaken the flag."""
+    from arc.learning.trainer import MetaModelTrainer
+
+    # Bypass __init__ — only set the attributes load_checkpoint reads.
+    trainer = MetaModelTrainer.__new__(MetaModelTrainer)
+    trainer.device = "cpu"
+    trainer.model = nn.Linear(2, 2)
+    trainer.optimizer = torch.optim.SGD(trainer.model.parameters(), lr=0.01)
+
+    # Build a checkpoint matching the structure load_checkpoint consumes.
+    safe_path = tmp_path / "trainer_safe.pt"
+    torch.save(
+        {
+            "model_state_dict": trainer.model.state_dict(),
+            "optimizer_state_dict": trainer.optimizer.state_dict(),
+        },
+        str(safe_path),
+    )
+
+    spy, captured, _ = _record_torch_load_kwargs("arc.learning.trainer.torch.load")
+    with patch("arc.learning.trainer.torch.load", side_effect=spy):
+        trainer.load_checkpoint(str(safe_path))
+
+    assert captured, "MetaModelTrainer.load_checkpoint never called torch.load"
+    assert captured[0].get("weights_only") is True, (
+        f"MetaModelTrainer.load_checkpoint must use weights_only=True on the "
+        f"first attempt. Got first-call kwargs: {captured[0]}"
+    )
+
+
+def test_failure_predictor_attempts_weights_only(tmp_path: Path) -> None:
+    """``FailurePredictor._load_model`` must call ``torch.load`` with
+    ``weights_only=True`` on the first attempt."""
+    from arc.prediction.predictor import FailurePredictor
+
+    # Bypass __init__; _load_model only needs self.device for map_location.
+    fp = FailurePredictor.__new__(FailurePredictor)
+    fp.device = "cpu"
+
+    # Minimal checkpoint — _load_model does shape inference downstream
+    # which will fail on this stub, but we only care that torch.load
+    # itself was invoked with weights_only=True. Subsequent failure is
+    # caught by the try/except below.
+    safe_path = tmp_path / "predictor_safe.pt"
+    torch.save({"model_state_dict": {}}, str(safe_path))
+
+    spy, captured, _ = _record_torch_load_kwargs("arc.prediction.predictor.torch.load")
+    with patch("arc.prediction.predictor.torch.load", side_effect=spy):
+        try:
+            fp._load_model(str(safe_path))
+        except Exception:
+            pass  # expected — stub checkpoint lacks the keys downstream code needs
+
+    assert captured, "FailurePredictor._load_model never called torch.load"
+    assert captured[0].get("weights_only") is True, (
+        f"FailurePredictor._load_model must use weights_only=True on the "
+        f"first attempt. Got first-call kwargs: {captured[0]}"
+    )
+
+
+def test_adaptive_checkpointer_attempts_weights_only(tmp_path: Path) -> None:
+    """``AdaptiveCheckpointer.restore`` must call ``torch.load`` with
+    ``weights_only=True`` on the first attempt."""
+    from arc.checkpointing.adaptive import AdaptiveCheckpointer
+
+    # Bypass __init__ — restore() reads self.checkpoints[idx]['path'].
+    cp = AdaptiveCheckpointer.__new__(AdaptiveCheckpointer)
+    cp.device = "cpu"
+
+    safe_path = tmp_path / "adaptive_safe.pt"
+    torch.save(
+        {
+            "model_state_dict": {"weight": torch.randn(2, 2)},
+            "optimizer_state_dict": {},
+            "step": 0,
+            "is_incremental": False,
+        },
+        str(safe_path),
+    )
+    cp.checkpoints = [{"path": str(safe_path)}]
+
+    spy, captured, _ = _record_torch_load_kwargs("arc.checkpointing.adaptive.torch.load")
+    with patch("arc.checkpointing.adaptive.torch.load", side_effect=spy):
+        try:
+            cp.restore(0)
+        except Exception:
+            pass  # restore() does additional bookkeeping post-load; we only
+                # care that torch.load itself was invoked correctly
+
+    assert captured, "AdaptiveCheckpointer.restore never called torch.load"
+    assert captured[0].get("weights_only") is True, (
+        f"AdaptiveCheckpointer.restore must use weights_only=True on the "
+        f"first attempt. Got first-call kwargs: {captured[0]}"
+    )
