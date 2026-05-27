@@ -21,7 +21,7 @@ import torch
 import torch.nn as nn
 import warnings
 
-from arc.config import Config
+from arc.config import Config, SignalConfig, FeatureConfig
 from arc.api.callback import Arc
 from arc.learning.ewc import ElasticWeightConsolidation
 from arc.uncertainty.conformal import ConformalPredictor, ConformalRegression
@@ -74,13 +74,13 @@ class ArcV2(Arc):
 
         if n_params > 100_000_000:
             config = Config(
-                signal={"activation_sample_rate": 0.01},
-                feature={"window_size": 5},
+                signal=SignalConfig(activation_sample_ratio=0.01),
+                feature=FeatureConfig(window_size=5),
             )
         elif n_params > 10_000_000:
             config = Config(
-                signal={"activation_sample_rate": 0.1},
-                feature={"window_size": 10},
+                signal=SignalConfig(activation_sample_ratio=0.1),
+                feature=FeatureConfig(window_size=10),
             )
         else:
             config = Config()

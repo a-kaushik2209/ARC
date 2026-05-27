@@ -286,6 +286,128 @@ class TestArcV2:
 
 
 # =============================================================================
+# ArcV2.auto() Large-Model Regression Tests  (Issue #1)
+# =============================================================================
+
+class TestArcV2AutoLargeModel:
+    """
+    Regression tests for issue #1:
+    "[BUG] ArcV2.auto() passes raw dicts to Config instead of config dataclass instances"
+
+    Verifies that both large-model branches in ArcV2.auto() correctly construct
+    SignalConfig and FeatureConfig dataclass instances rather than raw dicts, and
+    that the field name 'activation_sample_ratio' (not 'activation_sample_rate')
+    is used.
+    """
+
+    @staticmethod
+    def _make_model_gt10m() -> nn.Module:
+        """
+        Build a model with more than 10M parameters.
+        Linear(1024, 3000)  => 1024 * 3000 + 3000 = 3,075,000
+        Linear(3000, 3000)  => 3000 * 3000 + 3000 = 9,003,000
+        Linear(3000, 10)    =>    3000 * 10 + 10  =    30,010
+        Total               => ~12,108,010  > 10M
+        """
+        return nn.Sequential(
+            nn.Linear(1024, 3000),
+            nn.ReLU(),
+            nn.Linear(3000, 3000),
+            nn.ReLU(),
+            nn.Linear(3000, 10),
+        )
+
+    def test_large_model_param_count(self):
+        """Sanity check: confirm helper model exceeds 10M parameters."""
+        model = self._make_model_gt10m()
+        n = sum(p.numel() for p in model.parameters())
+        assert n > 10_000_000, f"Expected >10M params, got {n}"
+
+    def test_auto_no_crash_gt10m(self):
+        """
+        ArcV2.auto() must not crash for models with >10M parameters.
+
+        Before the fix, this raised:
+            AttributeError: 'dict' object has no attribute 'compute_curvature_proxy'
+        inside Arc._init_collectors() because config.signal was a raw dict.
+        """
+        from arc import ArcV2
+
+        model = self._make_model_gt10m()
+        optimizer = torch.optim.Adam(model.parameters())
+        arc = ArcV2.auto(model, optimizer)   # must not raise
+        assert arc is not None
+
+    def test_signal_is_SignalConfig_instance_gt10m(self):
+        """config.signal must be a SignalConfig instance, not a raw dict."""
+        from arc import ArcV2
+        from arc.config import SignalConfig
+
+        model = self._make_model_gt10m()
+        optimizer = torch.optim.Adam(model.parameters())
+        arc = ArcV2.auto(model, optimizer)
+
+        assert isinstance(arc.config.signal, SignalConfig), (
+            f"Expected SignalConfig, got {type(arc.config.signal).__name__}"
+        )
+
+    def test_feature_is_FeatureConfig_instance_gt10m(self):
+        """config.feature must be a FeatureConfig instance, not a raw dict."""
+        from arc import ArcV2
+        from arc.config import FeatureConfig
+
+        model = self._make_model_gt10m()
+        optimizer = torch.optim.Adam(model.parameters())
+        arc = ArcV2.auto(model, optimizer)
+
+        assert isinstance(arc.config.feature, FeatureConfig), (
+            f"Expected FeatureConfig, got {type(arc.config.feature).__name__}"
+        )
+
+    def test_activation_sample_ratio_is_valid_float_gt10m(self):
+        """
+        config.signal.activation_sample_ratio must be a valid float in (0, 1].
+
+        Before the fix, 'activation_sample_rate' (wrong name) was stored in a
+        raw dict — accessing .activation_sample_ratio would have raised
+        AttributeError or returned the dataclass default instead of 0.1.
+        """
+        from arc import ArcV2
+
+        model = self._make_model_gt10m()
+        optimizer = torch.optim.Adam(model.parameters())
+        arc = ArcV2.auto(model, optimizer)
+
+        ratio = arc.config.signal.activation_sample_ratio
+        assert isinstance(ratio, float), (
+            f"Expected float, got {type(ratio).__name__}"
+        )
+        assert 0.0 < ratio <= 1.0, (
+            f"activation_sample_ratio out of range: {ratio}"
+        )
+
+    def test_activation_sample_ratio_value_gt10m(self):
+        """config.signal.activation_sample_ratio must equal 0.1 for >10M models."""
+        from arc import ArcV2
+
+        model = self._make_model_gt10m()
+        optimizer = torch.optim.Adam(model.parameters())
+        arc = ArcV2.auto(model, optimizer)
+
+        assert arc.config.signal.activation_sample_ratio == 0.1
+
+    def test_window_size_gt10m(self):
+        """config.feature.window_size must equal 10 for >10M-param models."""
+        from arc import ArcV2
+
+        model = self._make_model_gt10m()
+        optimizer = torch.optim.Adam(model.parameters())
+        arc = ArcV2.auto(model, optimizer)
+
+        assert arc.config.feature.window_size == 10
+
+
+# =============================================================================
 # Run Tests
 # =============================================================================
 
