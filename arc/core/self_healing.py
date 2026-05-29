@@ -39,6 +39,7 @@ class SelfHealingConfig:
     lr_reduction_factor: float = 0.1
     max_lr_reductions: int = 5
     gradient_clip_norm: float = 1.0
+    enable_baseline_clipping: bool = True
 
     enable_forecasting: bool = True
     forecast_window: int = 10
@@ -545,11 +546,12 @@ class SelfHealingArc:
                 action.gradients_clipped = True
                 action.message = f"Predicted explosion (growth={growth:.2f}), clipped"
 
-        if not action.gradients_clipped and self.config.gradient_clip_norm > 0:
+        if self.config.enable_baseline_clipping and not action.gradients_clipped and self.config.gradient_clip_norm > 0:
             torch.nn.utils.clip_grad_norm_(
                 self.model.parameters(),
                 self.config.gradient_clip_norm
             )
+            action.gradients_clipped = True
 
         return action
 
