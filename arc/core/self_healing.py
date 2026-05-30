@@ -176,6 +176,12 @@ class SelfHealingArc:
             if self.config.verbose:
                 print(f"      Rolled back to step {step}")
 
+            # Invalidate conformal calibration — exchangeability breaks post-rollback
+            if hasattr(self, 'conformal_predictor') and self.conformal_predictor is not None:
+                self.conformal_predictor.invalidate_calibration()
+            if hasattr(self, 'conformal_regressor') and self.conformal_regressor is not None:
+                self.conformal_regressor.invalidate_calibration()
+
             return True
         except Exception as e:
             if self.config.verbose:
