@@ -265,9 +265,10 @@ class OOMRecoveryHandler:
         self.state.failed_recoveries += 1
         return False, current_batch
 
+    # AFTER
     def safe_forward(
         self,
-        forward_fn: Callable[[], torch.Tensor],
+        forward_fn: Callable[[Any], torch.Tensor],
         batch: Any = None,
     ) -> torch.Tensor:
         retries = 0
@@ -275,7 +276,7 @@ class OOMRecoveryHandler:
 
         while retries < self.config.max_retries:
             try:
-                return forward_fn()
+                return forward_fn(current_batch)
             except RuntimeError as e:
                 if "out of memory" in str(e).lower() or "CUDA" in str(e):
                     if self.config.verbose:
