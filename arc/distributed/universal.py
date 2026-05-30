@@ -255,11 +255,18 @@ class UniversalDistributedRollback:
             restored_state[name] = param.to(device=self.state.device, dtype=torch.float32)
         model.load_state_dict(restored_state)
 
+        opt_state = {}
         for k, v in checkpoint['optimizer'].items():
-            if k in self.optimizer.state:
-                for k2, v2 in v.items():
-                    if isinstance(v2, torch.Tensor):
-                        self.optimizer.state[k][k2] = v2.to(device=self.state.device, dtype=torch.float32)
+            opt_state[k] = {
+                k2: v2.to(device=self.state.device, dtype=torch.float32)
+                    if isinstance(v2, torch.Tensor) else v2
+                for k2, v2 in v.items()
+            }
+        optimizer_state_dict = {
+            'state': opt_state,
+            'param_groups': self.optimizer.state_dict()['param_groups'],
+        }
+        self.optimizer.load_state_dict(optimizer_state_dict)
 
         torch.set_rng_state(checkpoint['rng']['torch'])
         if 'cuda' in checkpoint['rng'] and torch.cuda.is_available():
