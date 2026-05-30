@@ -24,6 +24,7 @@ from collections import deque
 import copy
 import time
 import math
+from arc.utils.recovery_tracker import RecoveryEventTracker
 
 @dataclass
 class SelfHealingConfig:
@@ -125,6 +126,8 @@ class SelfHealingArc:
         if self.config.verbose:
             n_params = sum(p.numel() for _, p in self._param_list)
             print(f"    SelfHealingArc initialized: {n_params/1e6:.2f}M params")
+            
+        self.tracker = RecoveryEventTracker()
 
     def _get_lr(self) -> float:
         for pg in self.optimizer.param_groups:
@@ -171,7 +174,8 @@ class SelfHealingArc:
                             state[k] = v.to(device)
 
             self.model.load_state_dict(model_state)
-            self.optimizer.load_state_dict(opt_state)
+            self.optimizer.load_state_dict(opt_state) 
+            self.tracker.log_event(step,"checkpoint_restored")
 
             if self.config.verbose:
                 print(f"      Rolled back to step {step}")
@@ -389,12 +393,14 @@ class SelfHealingArc:
             action.should_skip = True
             action.message = "Skipping step (escape mode)"
             self.total_skips += 1
+            self.tracker.log_event(self.step_count,"step_skipped")
             return action
 
         if torch.isnan(loss) or torch.isinf(loss):
             action.failure_detected = "nan_loss"
             action.should_skip = True
             self.failures_detected += 1
+            self.tracker.log_event(self.step_count,"failure_detected")
 
             if self.config.loss_nan_action == "rollback":
                 if self._restore_checkpoint():
@@ -403,6 +409,8 @@ class SelfHealingArc:
                     self.failures_recovered += 1
                     self._reduce_lr()
                     action.lr_reduced = True
+                    self.tracker.log_event(self.step_count,"rollback_triggered")
+                    self.tracker.log_event(self.step_count,"lr_reduced")
                     
                     # Check for persistent failure loop
                     if self._track_rollback():
