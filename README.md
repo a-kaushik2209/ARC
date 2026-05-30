@@ -65,15 +65,15 @@ pip install -e .
 ## 3-Line Integration
 
 ```python
-from arc import Arc
+from arc import ArcV2
 
-controller = Arc(model, optimizer)
+controller = ArcV2(model, optimizer)
 
 for batch in dataloader:
     loss = model(batch)
     action = controller.step(loss)
 
-    if not action.rolled_back:
+    if not action.get('rolled_back', False) and action.get('recommendation') != 'rollback':
         loss.backward()
         optimizer.step()
 ```
