@@ -294,7 +294,7 @@ class AdaptiveCheckpointer:
 
         checkpoint = {
             'delta': delta,
-            'base_idx': len(self.checkpoints) - 1,
+            'base_state': {k: v.cpu().clone() for k, v in self._last_full_state.items()},
             'step': self.step,
             'is_incremental': True,
         }
@@ -448,19 +448,13 @@ class AdaptiveCheckpointer:
         return restored_step
 
     def _resolve_incremental(self, checkpoint: Dict) -> Dict:
-        base_idx = checkpoint.get('base_idx', 0)
-        base = self.checkpoints[base_idx]
-
-        if base.get('is_incremental', False):
-            base = self._resolve_incremental(base)
-
-        full_state = base['model'].copy()
+        full_state = {k: v.clone() for k, v in checkpoint['base_state'].items()}
         for k, v in checkpoint['delta'].items():
             full_state[k] = v
 
         return {
             'model': full_state,
-            'optimizer': base.get('optimizer', {}),
+            'optimizer': {},
             'step': checkpoint['step'],
         }
 
