@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with ARC. If not, see <https://www.gnu.org/licenses/>.
 
-__version__ = "2.0.0"
+__version__ = "4.0.0"
 __author__ = "Arc Research Team"
 
 from arc.config import Config, FailureMode
