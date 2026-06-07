@@ -56,7 +56,6 @@ def test_rng_preservation():
     print(f'  RNG state in checkpoint: {has_rng}')
     print(f'  Torch RNG saved: {rb.state.checkpoints[0]["rng_state"]["torch"] is not None}')
     assert has_rng
-    return has_rng
 
 
 def test_failure_detection():
@@ -94,7 +93,6 @@ def test_failure_detection():
         results.append(action.rolled_back)
     
     assert all(results)
-    return all(results)
 
 
 def test_recovery_success():
@@ -134,7 +132,6 @@ def test_recovery_success():
 
     print(f'  Recovery rate: {success_count}/10 ({success_count*10}%)')
     assert success_count == 10
-    return success_count == 10
 
 
 def test_false_positives():
@@ -157,7 +154,6 @@ def test_false_positives():
 
     print(f'  False positives: {false_positives}/1000 ({false_positives/10}%)')
     assert false_positives == 0
-    return false_positives == 0
 
 
 def test_lr_reduction():
@@ -184,7 +180,6 @@ def test_lr_reduction():
     correct = abs(new_lr - initial_lr * 0.5) < 1e-6
     print(f'  Reduction correct: {correct}')
     assert correct
-    return correct
 
 
 def test_optimizer_state():
@@ -209,7 +204,6 @@ def test_optimizer_state():
     print(f'  Optimizer has state (m,v): {has_state}')
     print(f'  Checkpoint saves optimizer: {saves_optimizer}')
     assert has_state and saves_optimizer
-    return has_state and saves_optimizer
 
 
 def test_multi_failure():
@@ -244,7 +238,6 @@ def test_multi_failure():
     print(f'  Rollbacks triggered: {rollback_count}')
     print(f'  Training completed: True')
     assert rollback_count >= 3
-    return rollback_count >= 3
 
 
 def test_gradient_explosion():
@@ -271,7 +264,6 @@ def test_gradient_explosion():
     
     print(f'  Gradient explosion detected: {action.rolled_back}')
     assert action.rolled_back
-    return action.rolled_back
 
 
 if __name__ == '__main__':
