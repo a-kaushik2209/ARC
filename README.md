@@ -65,9 +65,9 @@ pip install -e .
 ## 3-Line Integration
 
 ```python
-from arc import Arc
+from arc import ArcV2
 
-controller = Arc(model, optimizer)
+controller = ArcV2.auto(model, optimizer)
 
 for batch in dataloader:
     loss = model(batch)
