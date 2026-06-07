@@ -736,6 +736,34 @@ class TestArcV2Persistence:
         for name, tensor in original_fisher.items():
             assert torch.allclose(tensor, restored_fisher[name])
 
+    def test_load_uses_weights_only(self, tmp_path):
+        """load() must call torch.load with weights_only=True on the first attempt
+        (safe tensor-only deserialization, matching the repo's checkpoint pattern)."""
+        from unittest.mock import patch
+        from arc import ArcV2
+
+        self._consolidated_arc().save(str(tmp_path))
+
+        model = self._make_model()
+        restored = ArcV2(continual_learning=True, verbose=False)
+        restored.attach(model, torch.optim.Adam(model.parameters()))
+
+        captured = []
+        original_load = torch.load
+
+        def spy(*args, **kwargs):
+            captured.append(dict(kwargs))
+            return original_load(*args, **kwargs)
+
+        with patch("arc.api.v2.torch.load", side_effect=spy):
+            restored.load(str(tmp_path))
+
+        assert captured, "load() never called torch.load"
+        assert captured[0].get("weights_only") is True, (
+            f"ArcV2.load() must use weights_only=True on the first attempt. "
+            f"Got first-call kwargs: {captured[0]}"
+        )
+
 
 # =============================================================================
 # Run Tests

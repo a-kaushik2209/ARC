@@ -309,14 +309,44 @@ class ArcV2(Arc):
 
     def load(self, path: str) -> None:
         import os
+        import pickle
         self.load_state(path)
 
         ewc_path = os.path.join(path, "ewc_state.pt")
-        if self._enable_ewc and os.path.exists(ewc_path):
-            if self._ewc is None and self._model is not None:
-                self._ewc = ElasticWeightConsolidation(self._model)
-            if self._ewc is not None:
-                self._ewc.load_state_dict(torch.load(ewc_path))
+        if not (self._enable_ewc and os.path.exists(ewc_path)):
+            return
+
+        if self._ewc is None and self._model is not None:
+            self._ewc = ElasticWeightConsolidation(self._model)
+        if self._ewc is None:
+            return
+
+        try:
+            ewc_state = torch.load(ewc_path, map_location=self.device, weights_only=True)
+        except TypeError:
+            # PyTorch <1.13 doesn't support weights_only; fall back transparently
+            ewc_state = torch.load(ewc_path, map_location=self.device)
+        except (pickle.UnpicklingError, RuntimeError) as exc:
+            # Discriminate: pickle.UnpicklingError is always a weights_only rejection;
+            # RuntimeError is only a weights_only rejection if the message says so.
+            msg = str(exc).lower()
+            looks_like_weights_only_rejection = (
+                isinstance(exc, pickle.UnpicklingError)
+                or "weights only" in msg
+                or "unsupported global" in msg
+                or "weightsunpicklererror" in msg
+            )
+            if not looks_like_weights_only_rejection:
+                raise
+            warnings.warn(
+                f"Loading {ewc_path} with weights_only=False. "
+                "Only do this for checkpoints you produced yourself. "
+                "See SECURITY.md for the checkpoint trust boundary.",
+                stacklevel=2,
+            )
+            ewc_state = torch.load(ewc_path, map_location=self.device, weights_only=False)
+
+        self._ewc.load_state_dict(ewc_state, device=self.device)
 
     def __repr__(self) -> str:
         features = []
