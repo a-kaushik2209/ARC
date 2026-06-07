@@ -303,8 +303,20 @@ class ArcV2(Arc):
         if self._ewc is not None:
             import json
             ewc_state = self._ewc.state_dict()
+            torch.save(ewc_state, os.path.join(path, "ewc_state.pt"))
             with open(os.path.join(path, "ewc_meta.json"), 'w') as f:
                 json.dump({"n_tasks": self._ewc.n_tasks}, f)
+
+    def load(self, path: str) -> None:
+        import os
+        self.load_state(path)
+
+        ewc_path = os.path.join(path, "ewc_state.pt")
+        if self._enable_ewc and os.path.exists(ewc_path):
+            if self._ewc is None and self._model is not None:
+                self._ewc = ElasticWeightConsolidation(self._model)
+            if self._ewc is not None:
+                self._ewc.load_state_dict(torch.load(ewc_path))
 
     def __repr__(self) -> str:
         features = []

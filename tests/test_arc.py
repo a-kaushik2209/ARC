@@ -157,6 +157,29 @@ class TestWeightRollback:
             simple_model[0].weight.data, initial_weights, atol=1e-5
         ), "Weights were not restored to the pre-corruption checkpoint values"
 
+    def test_max_checkpoints_config_respected(self, simple_model):
+        """Regression for issue #14: RollbackConfig.max_checkpoints must size the deque."""
+        from arc.intervention import WeightRollback, RollbackConfig
+
+        config = RollbackConfig(max_checkpoints=5)
+        optimizer = torch.optim.Adam(simple_model.parameters())
+        rollback = WeightRollback(simple_model, optimizer, config, verbose=False)
+
+        assert rollback.state.checkpoints.maxlen == 5
+
+    def test_max_checkpoints_retains_more_than_three(self, simple_model):
+        """With max_checkpoints=5, more than the old hardcoded 3 checkpoints are kept."""
+        from arc.intervention import WeightRollback, RollbackConfig
+
+        config = RollbackConfig(max_checkpoints=5, checkpoint_frequency=1)
+        optimizer = torch.optim.Adam(simple_model.parameters())
+        rollback = WeightRollback(simple_model, optimizer, config, verbose=False)
+
+        for _ in range(10):
+            rollback.step(torch.tensor(1.0))
+
+        assert len(rollback.state.checkpoints) == 5
+
 
 # =============================================================================
 # GradientForecaster Tests
@@ -630,6 +653,88 @@ class TestConfigValidation:
         from arc.config import Config
         cfg = Config.high_accuracy()
         assert cfg is not None
+
+
+# =============================================================================
+# ArcV2 EWC Persistence Tests  (Issue #14)
+# =============================================================================
+
+class TestArcV2Persistence:
+    """
+    Regression tests for issue #14:
+    "[BUG] ArcV2.save() drops EWC state silently with no load() counterpart"
+
+    save() computed self._ewc.state_dict() but never wrote it to disk (only
+    n_tasks landed in ewc_meta.json), and there was no load() to restore Fisher
+    information / optimal params after a restart.
+    """
+
+    @staticmethod
+    def _make_model() -> nn.Module:
+        return nn.Sequential(
+            nn.Linear(100, 50),
+            nn.ReLU(),
+            nn.Linear(50, 10),
+        )
+
+    @staticmethod
+    def _make_loader() -> torch.utils.data.DataLoader:
+        from torch.utils.data import TensorDataset, DataLoader
+        x = torch.randn(16, 100)
+        y = torch.randint(0, 10, (16,))
+        return DataLoader(TensorDataset(x, y), batch_size=4)
+
+    def _consolidated_arc(self):
+        from arc import ArcV2
+
+        model = self._make_model()
+        optimizer = torch.optim.Adam(model.parameters())
+        arc = ArcV2(continual_learning=True, verbose=False)
+        arc.attach(model, optimizer)
+        arc.begin_task("task_1")
+        arc.consolidate_task(self._make_loader())
+        return arc
+
+    def test_save_writes_ewc_state_file(self, tmp_path):
+        """save() must persist ewc_state.pt, not just ewc_meta.json."""
+        arc = self._consolidated_arc()
+
+        arc.save(str(tmp_path))
+
+        assert (tmp_path / "ewc_state.pt").exists(), "ewc_state.pt was not written"
+
+    def test_load_restores_ewc_after_restart(self, tmp_path):
+        """A fresh instance (no begin_task) must recover the consolidated task via load()."""
+        from arc import ArcV2
+
+        self._consolidated_arc().save(str(tmp_path))
+
+        # Simulate a restart: brand-new instance, begin_task() is never called
+        model = self._make_model()
+        restored = ArcV2(continual_learning=True, verbose=False)
+        restored.attach(model, torch.optim.Adam(model.parameters()))
+        restored.load(str(tmp_path))
+
+        assert restored._ewc is not None, "EWC was not reconstructed on load()"
+        assert restored._ewc.n_tasks == 1
+
+    def test_load_restores_fisher_values(self, tmp_path):
+        """Restored Fisher matrices must match the ones that were saved."""
+        from arc import ArcV2
+
+        arc = self._consolidated_arc()
+        arc.save(str(tmp_path))
+        original_fisher = arc._ewc.task_memories[0].fisher_diag
+
+        model = self._make_model()
+        restored = ArcV2(continual_learning=True, verbose=False)
+        restored.attach(model, torch.optim.Adam(model.parameters()))
+        restored.load(str(tmp_path))
+
+        restored_fisher = restored._ewc.task_memories[0].fisher_diag
+        assert set(restored_fisher.keys()) == set(original_fisher.keys())
+        for name, tensor in original_fisher.items():
+            assert torch.allclose(tensor, restored_fisher[name])
 
 
 # =============================================================================

@@ -79,6 +79,7 @@ class WeightRollback:
         self.verbose = verbose
 
         self.state = RollbackState()
+        self.state.checkpoints = deque(maxlen=self.config.max_checkpoints)
         self._update_current_lr()
         self.state.initial_lr = self.state.current_lr
 
