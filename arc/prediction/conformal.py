@@ -175,7 +175,8 @@ class ConformalTTFPredictor:
 
         if self.symmetric:
             abs_residuals = np.abs(residuals)
-            q = np.quantile(abs_residuals, (1 - self.alpha) * (1 + 1/n))
+            q_level = min((1 - self.alpha) * (1 + 1/n), 1.0)
+            q = np.quantile(abs_residuals, q_level)
             self._q_lower = -q
             self._q_upper = q
         else:
@@ -183,8 +184,11 @@ class ConformalTTFPredictor:
             q_alpha_lower = self.alpha / 2
             q_alpha_upper = 1 - self.alpha / 2
 
-            self._q_lower = np.quantile(residuals, q_alpha_lower * (1 + 1/n))
-            self._q_upper = np.quantile(residuals, q_alpha_upper * (1 + 1/n))
+            q_level_lower = min(q_alpha_lower * (1 + 1/n), 1.0)
+            q_level_upper = min(q_alpha_upper * (1 + 1/n), 1.0)
+
+            self._q_lower = np.quantile(residuals, q_level_lower)
+            self._q_upper = np.quantile(residuals, q_level_upper)
 
         self._calibration_residuals = np.sort(residuals)
 

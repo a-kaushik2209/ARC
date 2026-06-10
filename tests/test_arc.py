@@ -633,6 +633,73 @@ class TestConfigValidation:
 
 
 # =============================================================================
+# Conformal Predictor Tests
+# =============================================================================
+
+class TestConformalPredictors:
+    """Tests for ConformalPredictor, ConformalTTFPredictor, and ConformallyCalibratedPredictor."""
+    
+    def test_conformal_ttf_small_sample_asymmetric_no_crash(self):
+        """Test that ConformalTTFPredictor doesn't crash on small calibration size for asymmetric interval."""
+        from arc.prediction.conformal import ConformalTTFPredictor
+        import numpy as np
+
+        # Under target coverage = 0.9 (alpha = 0.1), symmetric = False,
+        # q_alpha_upper is 0.95. For n = 11, 0.95 * (1 + 1/11) = 1.036 > 1.0,
+        # which would crash np.quantile if not clamped.
+        predictor = ConformalTTFPredictor(target_coverage=0.9, symmetric=False)
+        predictions = np.zeros(11)
+        actuals = np.random.randn(11)
+
+        # This should run successfully without raising ValueError: Quantiles must be in the range [0, 1]
+        q_lower, q_upper = predictor.calibrate(predictions, actuals)
+        assert q_lower <= q_upper
+
+    def test_conformal_ttf_small_sample_symmetric_no_crash(self):
+        """Test that ConformalTTFPredictor doesn't crash on small calibration size for symmetric interval."""
+        from arc.prediction.conformal import ConformalTTFPredictor
+        import numpy as np
+
+        # Under target coverage = 0.9 (alpha = 0.1), symmetric = True,
+        # (1 - alpha) * (1 + 1/5) = 0.9 * 1.2 = 1.08 > 1.0, which would crash.
+        predictor = ConformalTTFPredictor(target_coverage=0.9, symmetric=True)
+        predictions = np.zeros(5)
+        actuals = np.random.randn(5)
+
+        q_lower, q_upper = predictor.calibrate(predictions, actuals)
+        assert q_lower <= q_upper
+
+    def test_conformally_calibrated_predictor_integration(self):
+        """Test calibration process through ConformallyCalibratedPredictor with small sample sizes."""
+        from arc.prediction.conformal import ConformallyCalibratedPredictor
+        import numpy as np
+
+        predictor = ConformallyCalibratedPredictor(n_failure_modes=2)
+        
+        class_probs = np.random.dirichlet(np.ones(2), size=15)
+        class_labels = np.random.randint(0, 2, size=15)
+        
+        # Mode 0 has 12 predictions (which triggers calibration since 12 > 10,
+        # but is less than 19, so it would crash asymmetric calibration without clamping)
+        ttf_predictions = {
+            0: np.random.randn(12),
+            1: np.random.randn(5)  # Mode 1 has 5 predictions (does not calibrate since <= 10)
+        }
+        ttf_actuals = {
+            0: np.random.randn(12),
+            1: np.random.randn(5)
+        }
+
+        # Calibrate should not crash
+        predictor.calibrate(class_probs, class_labels, ttf_predictions, ttf_actuals)
+        assert predictor._is_calibrated
+
+        # Predict should run successfully
+        res = predictor.predict(class_probs[0], [0.5, 0.5])
+        assert "ttf_intervals" in res
+
+
+# =============================================================================
 # Run Tests
 # =============================================================================
 
