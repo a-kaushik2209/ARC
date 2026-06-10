@@ -25,7 +25,7 @@ setup(
     description="Automatic Recovery Controller - Auto-detect and recover from neural network training failures",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/aryankaushik/arc-training",
+    url="https://github.com/a-kaushik2209/ARC",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",

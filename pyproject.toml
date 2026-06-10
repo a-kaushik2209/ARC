@@ -58,10 +58,10 @@ full = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/aryankaushik/arc-training"
+Homepage = "https://github.com/a-kaushik2209/ARC"
 Documentation = "https://arc-training.readthedocs.io"
-Repository = "https://github.com/aryankaushik/arc-training"
-Changelog = "https://github.com/aryankaushik/arc-training/blob/main/CHANGELOG.md"
+Repository = "https://github.com/a-kaushik2209/ARC"
+Changelog = "https://github.com/a-kaushik2209/ARC/blob/master/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["."]
