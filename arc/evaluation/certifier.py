@@ -11,6 +11,7 @@ import torch.nn.functional as F
 
 # IMPORT THESE FROM FRAMEWORK
 from arc.experiments.framework import FailureInducer, FailureType
+from arc.signals import loss
 
 
 class SelfHealingCertifier:
@@ -30,6 +31,12 @@ class SelfHealingCertifier:
             training_config: Dict with 'lr', 'batch_size', etc.
             callbacks: List of self-healing callback instances
         """
+        
+        try:
+            next(model.parameters())
+        except StopIteration:
+            raise ValueError("Model must have trainable parameters")
+    
         self.model = model
         self.optimizer = optimizer
         self.config = training_config
@@ -87,9 +94,23 @@ class SelfHealingCertifier:
             loss = F.cross_entropy(output, dummy_target)
             
             # Check if loss became NaN/Inf (sign of failure)
+            # NEW - catches multiple failure indicators
+            loss_val = loss.item()
             if torch.isnan(loss) or torch.isinf(loss):
-                history['recovery_triggered'] = True
-                history['diagnostic'].append(f"Anomaly detected at step {step}: loss is {loss.item()}")
+            # EXPLODING_GRADIENT produces NaN
+               history['recovery_triggered'] = True
+               history['diagnostic'].append(f"Step {step}: Loss is NaN/Inf (catastrophic failure)")
+            elif loss_val > 1e6:
+            # DIVERGENCE produces huge loss
+               history['recovery_triggered'] = True
+               history['diagnostic'].append(f"Step {step}: Loss exploded to {loss_val}")
+            elif loss_val < 1e-6 and step > 5:
+            # VANISHING_GRADIENT produces tiny loss with no improvement
+                if len(history['losses']) > 3:
+                   recent_avg = sum(history['losses'][-3:]) / 3
+                if abs(recent_avg - loss_val) < 1e-8:  # No change = stuck
+                   history['recovery_triggered'] = True
+                   history['diagnostic'].append(f"Step {step}: Loss vanished/stuck at {loss_val}")
             
             # Backward pass
             self.optimizer.zero_grad()
@@ -173,7 +194,7 @@ class SelfHealingCertifier:
             'timestamp': datetime.now().isoformat(),
             'config': {
                 'model_type': self.config.get('model_type', 'unknown'),
-                'learning_rate': self.config.get('learning_rate', 0.001),
+                'learning_rate': self.config.get('lr', 0.001),
                 'batch_size': self.config.get('batch_size', 16),
             },
             'test_results': {},
@@ -185,7 +206,7 @@ class SelfHealingCertifier:
             report['test_results'][failure_name] = {
                 'passed': result['passed'],
                 'recovery_step': result['recovery_step'],
-                'recovery_latency_steps': result['recovery_step'] if result['recovery_step'] else None,
+                'recovery_latency_steps': result['recovery_step'],
                 'losses': result['losses'][:20],  # First 20 losses only
                 'gradient_norms': result['gradient_norms'][:20],
                 'diagnostic': result['diagnostic']
