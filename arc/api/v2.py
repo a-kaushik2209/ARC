@@ -19,11 +19,15 @@
 from typing import Dict, Any, Optional, Union, List, Callable
 import torch
 import torch.nn as nn
+import pickle
 import warnings
 
 from arc.config import Config, SignalConfig, FeatureConfig
 from arc.api.callback import Arc
-from arc.learning.ewc import ElasticWeightConsolidation
+try:
+    from arc.learning.ewc import ElasticWeightConsolidation
+except ImportError:
+    ElasticWeightConsolidation = None
 from arc.uncertainty.conformal import ConformalPredictor, ConformalRegression
 from arc.security.adversarial import AdversarialDetector, AdversarialTrainer
 
@@ -302,9 +306,72 @@ class ArcV2(Arc):
 
         if self._ewc is not None:
             import json
-            ewc_state = self._ewc.state_dict()
+            # Persist the full EWC state (Fisher matrices + optimal params)
+            # so continual-learning progress survives restarts.
+            torch.save(
+                self._ewc.state_dict(),
+                os.path.join(path, "ewc_state.pt"),
+            )
             with open(os.path.join(path, "ewc_meta.json"), 'w') as f:
                 json.dump({"n_tasks": self._ewc.n_tasks}, f)
+
+    def load(self, path: str, model: Optional[nn.Module] = None) -> None:
+        """Restore ArcV2 state including EWC continual-learning data.
+
+        Parameters
+        ----------
+        path : str
+            Directory previously passed to :meth:`save`.
+        model : nn.Module, optional
+            If provided, the model is re-attached before restoring EWC
+            state (required if a fresh ArcV2 instance was created).
+        """
+        import os
+
+        self.load_state(path)
+
+        if model is not None and self._model is None:
+            self._model = model
+
+        ewc_path = os.path.join(path, "ewc_state.pt")
+        if self._enable_ewc and os.path.exists(ewc_path):
+            if self._ewc is None and self._model is not None:
+                self._ewc = ElasticWeightConsolidation(self._model)
+
+            if self._ewc is not None:
+                device = "cpu"
+                if self._model is not None:
+                    try:
+                        device = str(next(self._model.parameters()).device)
+                    except StopIteration:
+                        pass
+
+                try:
+                    state = torch.load(ewc_path, map_location=device, weights_only=True)
+                except TypeError:
+                    state = torch.load(ewc_path, map_location=device)
+                except (pickle.UnpicklingError, RuntimeError) as exc:
+                    msg = str(exc).lower()
+                    looks_like_weights_only_rejection = (
+                        isinstance(exc, pickle.UnpicklingError)
+                        or "weights only" in msg
+                        or "unsupported global" in msg
+                        or "weightsunpicklererror" in msg
+                    )
+                    if not looks_like_weights_only_rejection:
+                        raise
+                    warnings.warn(
+                        f"Loading {ewc_path} with weights_only=False. "
+                        "Only do this for checkpoints you produced yourself. "
+                        "See SECURITY.md for the checkpoint trust boundary.",
+                        stacklevel=2,
+                    )
+                    state = torch.load(ewc_path, map_location=device, weights_only=False)
+
+                self._ewc.load_state_dict(state, device=device)
+
+                if self.verbose:
+                    print(f"   Restored EWC state: {self._ewc.n_tasks} task(s)")
 
     def __repr__(self) -> str:
         features = []
