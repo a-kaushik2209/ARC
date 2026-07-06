@@ -16,12 +16,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with ARC. If not, see <https://www.gnu.org/licenses/>.
 
+import logging
 from typing import Dict, List, Optional, Tuple, Union, Callable
 import torch
 import torch.nn as nn
 import numpy as np
 from dataclasses import dataclass
 from collections import deque
+
+logger = logging.getLogger(__name__)
 
 @dataclass
 class PredictionSet:
@@ -60,10 +63,31 @@ class ConformalPredictor:
         self._calibration_scores: List[float] = []
         self._quantile: Optional[float] = None
         self._is_calibrated = False
+        self.recalibration_pending = False
 
         self._online_scores: deque = deque(maxlen=1000)
 
         self._va_calibrator: Optional[VennAbersCalibrator] = None
+
+    def invalidate_calibration(self) -> None:
+        """Invalidate calibration scores after a rollback event.
+
+        Conformal prediction guarantees are only valid under the assumption
+        that calibration data and test data are exchangeable. A rollback
+        fundamentally breaks this assumption — the model distribution shifts
+        but the calibration set does not update.
+
+        This method clears all stale calibration state and sets
+        recalibration_pending=True so callers can detect the condition.
+        """
+        self._calibration_scores = []
+        self._quantile = None
+        self._is_calibrated = False
+        self.recalibration_pending = True
+        logger.warning(
+            "ConformalPredictor: calibration invalidated after rollback. "
+            "Uncertainty bounds are unreliable until recalibrate() is called."
+        )
 
     def calibrate(
         self,
@@ -103,6 +127,7 @@ class ConformalPredictor:
             self._va_calibrator.fit(all_probs, all_labels)
 
         self._is_calibrated = True
+        self.recalibration_pending = False
         self.model.train()
 
         return self._quantile
@@ -159,6 +184,12 @@ class ConformalPredictor:
 
         if not self._is_calibrated:
             raise RuntimeError("Must call calibrate() before predict()")
+
+        if self.recalibration_pending:
+            logger.warning(
+                "ConformalPredictor: predicting with stale calibration. "
+                "Call calibrate() after rollback for valid coverage guarantees."
+            )
 
         single = (x.dim() == 1) or (x.dim() >= 2 and x.size(0) == 1)
         if x.dim() == 1:
@@ -320,8 +351,30 @@ class ConformalRegression:
         self.alpha = alpha
         self.method = method
 
+        self._calibration_scores: List[float] = []
         self._quantile: Optional[float] = None
         self._is_calibrated = False
+        self.recalibration_pending = False
+
+    def invalidate_calibration(self) -> None:
+        """Invalidate calibration scores after a rollback event.
+
+        Conformal prediction guarantees are only valid under the assumption
+        that calibration data and test data are exchangeable. A rollback
+        fundamentally breaks this assumption — the model distribution shifts
+        but the calibration set does not update.
+
+        This method clears all stale calibration state and sets
+        recalibration_pending=True so callers can detect the condition.
+        """
+        self._calibration_scores = []
+        self._quantile = None
+        self._is_calibrated = False
+        self.recalibration_pending = True
+        logger.warning(
+            "ConformalRegression: calibration invalidated after rollback. "
+            "Uncertainty bounds are unreliable until recalibrate() is called."
+        )
 
     def calibrate(self, dataloader: torch.utils.data.DataLoader) -> float:
 
@@ -338,11 +391,14 @@ class ConformalRegression:
                 res = torch.abs(y - pred)
                 residuals.extend(res.cpu().numpy().tolist())
 
+        self._calibration_scores = residuals
+
         n = len(residuals)
         q_level = np.ceil((n + 1) * (1 - self.alpha)) / n
         self._quantile = np.quantile(residuals, min(q_level, 1.0))
 
         self._is_calibrated = True
+        self.recalibration_pending = False
         self.model.train()
 
         return self._quantile
@@ -351,6 +407,12 @@ class ConformalRegression:
 
         if not self._is_calibrated:
             raise RuntimeError("Must call calibrate() before predict()")
+
+        if self.recalibration_pending:
+            logger.warning(
+                "ConformalRegression: predicting with stale calibration. "
+                "Call calibrate() after rollback for valid coverage guarantees."
+            )
 
         single = x.dim() == 1
         if single:
