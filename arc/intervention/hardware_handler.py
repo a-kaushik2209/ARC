@@ -223,6 +223,7 @@ class HardwareRecoveryHandler:
         return self._fallback_to_cpu()
 
     def _recover_disk_full(self) -> HardwareRecoveryResult:
+        cleanup_error: Optional[str] = None
         try:
             if os.path.exists(self.config.checkpoint_dir):
                 files = sorted([
@@ -236,8 +237,9 @@ class HardwareRecoveryHandler:
                     try:
                         os.remove(f)
                         removed += 1
-                    except Exception:
-                        pass
+                    except OSError as e:
+                        cleanup_error = str(e)
+                        warnings.warn(f"Disk cleanup failed during recovery: {e}")
 
                 if removed > 0:
                     self.recovery_count += 1
@@ -245,23 +247,33 @@ class HardwareRecoveryHandler:
                         success=True,
                         error_type=HardwareErrorType.DISK_FULL,
                         recovery_action=f"Removed {removed} old checkpoints",
-                        details={"removed_count": removed}
+                        details={
+                            "removed_count": removed,
+                            **({"cleanup_error": cleanup_error} if cleanup_error else {}),
+                        },
                     )
-        except Exception as e:
-            pass
+        except OSError as e:
+            cleanup_error = str(e)
+            warnings.warn(f"Disk cleanup failed during recovery: {e}")
 
         if self.config.remote_checkpoint_url:
             return HardwareRecoveryResult(
                 success=True,
                 error_type=HardwareErrorType.DISK_FULL,
                 recovery_action="Switching to remote checkpoint storage",
-                details={"remote_url": self.config.remote_checkpoint_url}
+                details={
+                    "remote_url": self.config.remote_checkpoint_url,
+                    **({"cleanup_error": cleanup_error} if cleanup_error else {}),
+                },
             )
 
         return HardwareRecoveryResult(
             success=False,
             error_type=HardwareErrorType.DISK_FULL,
-            details={"reason": "Could not free disk space"}
+            details={
+                "reason": "Could not free disk space",
+                **({"cleanup_error": cleanup_error} if cleanup_error else {}),
+            },
         )
 
     def _recover_network_failure(self) -> HardwareRecoveryResult:
@@ -291,26 +303,35 @@ class HardwareRecoveryHandler:
         )
 
     def _recover_ddp_failure(self) -> HardwareRecoveryResult:
+        details: Dict[str, Any] = {}
         try:
             if torch.distributed.is_initialized():
                 try:
                     torch.distributed.barrier(
                         timeout=timedelta(seconds=self.config.ddp_timeout_seconds)
                     )
-                except Exception:
+                except RuntimeError as e:
+                    details["barrier_error"] = str(e)
                     if self.config.isolate_failed_ranks:
-                        warnings.warn("DDP ranks out of sync, continuing with available ranks")
+                        warnings.warn(
+                            f"DDP barrier failed during recovery: {e}. "
+                            "Continuing with available ranks"
+                        )
 
                 self.recovery_count += 1
                 return HardwareRecoveryResult(
                     success=True,
                     error_type=HardwareErrorType.DDP_COMMUNICATION_FAILURE,
                     recovery_action="DDP barrier recovered",
+                    details=details,
                 )
-        except Exception as e:
-            pass
+        except RuntimeError as e:
+            details["ddp_recovery_error"] = str(e)
+            warnings.warn(f"DDP recovery failed: {e}")
 
-        return self._fallback_to_single_device()
+        fallback = self._fallback_to_single_device()
+        fallback.details.update(details)
+        return fallback
 
     def _recover_driver_error(self) -> HardwareRecoveryResult:
         return self._fallback_to_cpu()
