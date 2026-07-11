@@ -239,25 +239,39 @@ class Config:
 
     @classmethod
     def low_overhead(cls) -> 'Config':
-
-        config = cls()
-        config.signal.activation_sample_ratio = 0.05
-        config.signal.compute_curvature_proxy = False
-        config.signal.compute_gradient_entropy = False
-        config.feature.compute_spectral = False
-        config.feature.compute_correlations = False
-        config.prediction.mc_dropout_samples = 5
-        config.overhead.max_overhead_percent = 2.0
-        return config
+        return cls(
+            signal=SignalConfig(
+                activation_sample_ratio=0.05,
+                compute_curvature_proxy=False,
+                compute_gradient_entropy=False,
+            ),
+            feature=FeatureConfig(
+                compute_spectral=False,
+                compute_correlations=False,
+            ),
+            prediction=PredictionConfig(
+                mc_dropout_samples=5,
+            ),
+            overhead=OverheadConfig(
+                max_overhead_percent=2.0,
+            ),
+        )
 
     @classmethod
     def high_accuracy(cls) -> 'Config':
-
-        config = cls()
-        config.signal.activation_sample_ratio = 0.3
-        config.signal.compute_curvature_proxy = True
-        config.feature.compute_spectral = True
-        config.feature.window_size = 20
-        config.prediction.mc_dropout_samples = 50
-        config.overhead.max_overhead_percent = 10.0
-        return config
+        return cls(
+            signal=SignalConfig(
+                activation_sample_ratio=0.3,
+                compute_curvature_proxy=True,
+            ),
+            feature=FeatureConfig(
+                compute_spectral=True,
+                window_size=20,
+            ),
+            prediction=PredictionConfig(
+                mc_dropout_samples=50,
+            ),
+            overhead=OverheadConfig(
+                max_overhead_percent=10.0,
+            ),
+        )

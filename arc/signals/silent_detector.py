@@ -99,7 +99,6 @@ class MetricTracker:
             return 0.0
         return np.std(list(self.history))
 
-    @property
     def recent_mean(self, window: int = 10) -> float:
         if not self.history:
             return 0.0

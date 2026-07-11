@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with ARC. If not, see <https://www.gnu.org/licenses/>.
 
-__version__ = "4.0.0"
+__version__ = "5.0.0"
 __author__ = "Arc Research Team"
 
 from arc.config import Config, FailureMode
@@ -26,6 +26,11 @@ from arc.api.pytorch_callback import ArcCallback, ArcWrapper
 from arc.api.report import ReportGenerator
 
 from arc.api.v2 import ArcV2, Arc2
+
+# v3 unified API — THE canonical entry point
+from arc.core.controller import Controller, ControllerConfig, StepAction, HealthStatus
+from arc.signals.lyapunov import LyapunovMonitor, LyapunovState, TrainingPhase
+from arc.signals.trend import TrendDetector, DriftReport, DriftSeverity
 
 from arc.signals import (
     SignalCollector,
@@ -71,7 +76,11 @@ from arc.learning import (
     MetaModelTrainer,
 )
 
-from arc.learning.ewc import ElasticWeightConsolidation, ProgressiveNet
+try:
+    from arc.learning.ewc import ElasticWeightConsolidation, ProgressiveNet
+except ImportError:
+    ElasticWeightConsolidation = None
+    ProgressiveNet = None
 
 from arc.uncertainty import (
     ConformalPredictor,
@@ -123,7 +132,19 @@ from arc.intervention.hardware_handler import (
 )
 
 __all__ = [
+    # v3 unified API (recommended)
+    "Controller",
+    "ControllerConfig",
+    "StepAction",
+    "HealthStatus",
+    "LyapunovMonitor",
+    "LyapunovState",
+    "TrainingPhase",
+    "TrendDetector",
+    "DriftReport",
+    "DriftSeverity",
 
+    # Legacy APIs (still supported)
     "Arc",
     "ArcV2",
     "Arc2",

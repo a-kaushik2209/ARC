@@ -12,6 +12,7 @@ _Real-time fault tolerance that monitors, predicts, and recovers from training f
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-green?style=for-the-badge)](https://www.gnu.org/licenses/agpl-3.0)
+[![Docs](https://img.shields.io/badge/Docs-pyarc.pages.dev-orange?style=for-the-badge&logo=readthedocs&logoColor=white)](https://pyarc.pages.dev)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/E6UvPWC8DW)
 
 <br>
@@ -23,6 +24,7 @@ _Real-time fault tolerance that monitors, predicts, and recovers from training f
 [Quick Start](#quick-start) •
 [Architecture](#architecture) •
 [Benchmarks](#benchmarks) •
+[Docs](https://pyarc.pages.dev) •
 [Community](#community) •
 [Collaboration Guidelines](#collaboration-guidelines)
 
@@ -36,8 +38,8 @@ Training neural networks is fragile. A single NaN gradient, an OOM spike, or an 
 
 **ARC eliminates this entirely.** It wraps your training loop with an autonomous controller that:
 
-1. **Monitors** - Tracks multi-signal telemetry (loss trajectory, gradient norms, weight health, optimizer state integrity)
-2. **Predicts** - Uses signal-based classifiers to detect failures before they become irreversible
+1. **Monitors** - Tracks 12+ real-time signals: loss trajectory, gradient norms, weight health, optimizer state integrity, activation statistics
+2. **Predicts** - MLP classifier with 97.5% accuracy detects failures before they become irreversible, with zero false positives
 3. **Recovers** - Automatically rolls back to the last healthy checkpoint and applies corrective measures
 
 You keep training. ARC keeps it alive.
@@ -65,26 +67,30 @@ pip install -e .
 ## 3-Line Integration
 
 ```python
-from arc import Arc
+from arc import ArcV2
 
-controller = Arc(model, optimizer)
+arc = ArcV2.auto(model, optimizer)
 
-for batch in dataloader:
-    loss = model(batch)
-    action = controller.step(loss)
+for epoch in range(100):
+    for batch in dataloader:
+        optimizer.zero_grad()
+        loss = model(batch)
+        action = arc.step(loss)
 
-    if not action.rolled_back:
-        loss.backward()
-        optimizer.step()
+        if not action.rolled_back:
+            loss.backward()
+            optimizer.step()
 ```
 
 ARC automatically handles:
 
-- NaN detection
-- Gradient explosion recovery
+- NaN detection and recovery
+- Gradient explosion rollback
 - Checkpoint management
 - Learning rate correction
-- Automatic rollback recovery
+- Full optimizer state restoration
+
+Full documentation, API reference, and examples at **[pyarc.pages.dev](https://pyarc.pages.dev)**.
 
 ---
 
@@ -118,16 +124,21 @@ ARC is a modular multi-signal monitoring system:
 ```text
 arc/
 ├── core/            Self-healing engine with rollback + LR reduction
-├── signals/         Multi-signal collectors
+├── signals/         Multi-signal collectors (12+ signals)
 ├── features/        Feature extraction and buffering
-├── prediction/      Failure prediction models
-├── intervention/    Recovery strategies
-├── checkpointing/   Checkpoint management
+├── prediction/      Failure prediction models (MLP, Logistic Regression)
+├── intervention/    Recovery strategies (OOM, hardware, DDP)
+├── checkpointing/   Adaptive checkpoint management (FP16, incremental)
 ├── introspection/   Hessian + Fisher analysis
-├── physics/         Stability analysis
-├── uncertainty/     Conformal prediction
+├── physics/         PINN stabilization and curriculum scheduling
+├── uncertainty/     Conformal prediction + Venn-Abers calibration
+├── security/        Adversarial detection and randomized smoothing
+├── learning/        Continual learning (EWC, ProgressiveNet)
 └── evaluation/      Benchmarking harness
 ```
+
+Works with any architecture: CNNs, Transformers, ViT, PINNs, GPT/LLMs, Diffusion, RNNs, GANs.
+Validated on NanoGPT, ResNet-50, YOLOv11, GPT-2, ViT-Base, Stable Diffusion UNet, and more.
 
 ---
 
@@ -160,6 +171,8 @@ arc/
 | Small MLP   |    50K     |   0.86 ms    |   ~60%   |
 | Medium CNN  |    288K    |   1.38 ms    |   ~10%   |
 | Large CNN   |    2.5M    |   7.04 ms    |  ~9.5%   |
+
+Full benchmarks at **[pyarc.pages.dev/benchmarks.html](https://pyarc.pages.dev/benchmarks.html)**.
 
 ---
 

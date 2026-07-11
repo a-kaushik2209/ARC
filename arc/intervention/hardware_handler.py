@@ -22,6 +22,7 @@ import os
 import sys
 import time
 import traceback
+from datetime import timedelta
 from typing import Optional, Dict, Any, Callable, List, Tuple, Union
 from dataclasses import dataclass, field
 from arc.config import default_checkpoint_dir
@@ -271,7 +272,7 @@ class HardwareRecoveryHandler:
 
             try:
                 if torch.distributed.is_initialized():
-                    torch.distributed.barrier(timeout=torch.distributed.timedelta(seconds=10))
+                    torch.distributed.barrier(timeout=timedelta(seconds=10))
 
                 self.recovery_count += 1
                 return HardwareRecoveryResult(
@@ -294,7 +295,7 @@ class HardwareRecoveryHandler:
             if torch.distributed.is_initialized():
                 try:
                     torch.distributed.barrier(
-                        timeout=torch.distributed.timedelta(seconds=self.config.ddp_timeout_seconds)
+                        timeout=timedelta(seconds=self.config.ddp_timeout_seconds)
                     )
                 except Exception:
                     if self.config.isolate_failed_ranks:

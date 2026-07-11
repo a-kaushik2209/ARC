@@ -142,6 +142,11 @@ class WeightRollback:
         if self.verbose:
             print(f"  Rolled back {steps_back} steps to step {checkpoint['step']} (RNG restored)")
 
+        # Reset detection state so stale pre-rollback losses don't immediately re-trigger
+        self.state.loss_history.clear()
+        self.state.stable_step_count = 0
+        self.state.stable_layers.clear()
+
         return steps_back
 
     def _reduce_learning_rate(self):

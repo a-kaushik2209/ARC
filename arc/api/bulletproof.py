@@ -201,7 +201,7 @@ class BulletproofTrainer:
 
             if self.oom_handler:
                 loss = self.oom_handler.safe_forward(
-                    lambda: forward_fn(batch),
+                    lambda b: forward_fn(b),
                     batch
                 )
             else:

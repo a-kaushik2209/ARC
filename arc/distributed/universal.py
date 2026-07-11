@@ -255,15 +255,34 @@ class UniversalDistributedRollback:
             restored_state[name] = param.to(device=self.state.device, dtype=torch.float32)
         model.load_state_dict(restored_state)
 
+        opt_state = {}
         for k, v in checkpoint['optimizer'].items():
-            if k in self.optimizer.state:
-                for k2, v2 in v.items():
-                    if isinstance(v2, torch.Tensor):
-                        self.optimizer.state[k][k2] = v2.to(device=self.state.device, dtype=torch.float32)
+            opt_state[k] = {
+                k2: (
+                    v2.to(
+                        device=self.state.device,
+                        dtype=torch.float32 if v2.is_floating_point() else v2.dtype,
+                    )
+                    if isinstance(v2, torch.Tensor)
+                    else v2
+                )
+                for k2, v2 in v.items()
+            }
+        optimizer_state_dict = {
+            'state': opt_state,
+            'param_groups': checkpoint.get(
+                'optimizer_param_groups',
+                self.optimizer.state_dict()['param_groups']  # fallback for old checkpoints
+            ),
+        }
+        self.optimizer.load_state_dict(optimizer_state_dict)
 
         torch.set_rng_state(checkpoint['rng']['torch'])
         if 'cuda' in checkpoint['rng'] and torch.cuda.is_available():
             torch.cuda.set_rng_state(checkpoint['rng']['cuda'])
+
+        # Reset loss history so pre-rollback spikes don't re-trigger detection
+        self._loss_history.clear()
 
         return checkpoint['step']
 
