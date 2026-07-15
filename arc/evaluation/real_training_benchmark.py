@@ -95,12 +95,20 @@ class RealTrainingBenchmarkResult:
     MAX_DETECTION_LATENCY: float = 5.0   # epochs
     MAX_FALSE_POSITIVE_RATE: float = 0.10
     MAX_OVERHEAD_PERCENT: float = 10.0
+    expect_failure: bool = True   # False for healthy-baseline benchmarks
 
     def passed(self) -> bool:
         latency_ok = (
             self.detection_latency_epochs is not None
             and self.detection_latency_epochs <= self.MAX_DETECTION_LATENCY
         )
+        if not self.expect_failure:
+            # Healthy-baseline benchmarks should pass when ARC correctly stays quiet.
+            return (
+                not self.failure_detected
+                and self.false_positive_rate <= self.MAX_FALSE_POSITIVE_RATE
+                and self.overhead_percent <= self.MAX_OVERHEAD_PERCENT
+            )
         return (
             self.failure_detected
             and latency_ok
@@ -178,7 +186,7 @@ def _run_training(
         optimizer.zero_grad()
 
         if use_fp16:
-            with torch.autocast(device_type="cpu", dtype=torch.float16):
+            with torch.cpu.amp.autocast(dtype=torch.float16):
                 output = model(x)
                 loss = F.cross_entropy(output, y)
         else:
@@ -204,7 +212,9 @@ def _run_training(
 
         if arc is not None:
             arc.on_batch_end(loss_val if math.isfinite(loss_val) else 1e9)
-            arc.on_epoch_end(epoch)
+            prediction = arc.on_epoch_end(epoch)
+            if prediction is not None:
+                arc_events.append(prediction)
 
     return {
         "losses": losses,
@@ -237,6 +247,13 @@ class RealTrainingFailureBenchmark:
         inject_at_epoch: int = 8,
         verbose: bool = True,
     ):
+        if not (0 <= inject_at_epoch < n_epochs):
+            raise ValueError(
+                f"inject_at_epoch ({inject_at_epoch}) must be in range "
+                f"[0, {n_epochs}) so the injected failure actually occurs "
+                f"during the run."
+            )
+
         self.config = config or Config()
         self.n_epochs = n_epochs
         self.inject_at_epoch = inject_at_epoch
@@ -515,14 +532,39 @@ class RealTrainingFailureBenchmark:
 
             # attempt to load — should raise
             try:
-                torch.load(ckpt_path, weights_only=False)
+                try:
+                    torch.load(ckpt_path, weights_only=False)
+                except TypeError:
+                    # PyTorch < 2.4 doesn't support the weights_only kwarg
+                    torch.load(ckpt_path)
             except Exception:
                 detected = True
 
-            # recovery: fall back to fresh model
+            # recovery: restore from a fresh, valid checkpoint and confirm the
+            # model can actually resume training — not just that it constructed
             if detected:
                 model2 = _make_model()
-                recovery_success = True
+                with tempfile.NamedTemporaryFile(suffix=".pt", delete=False) as f2:
+                    recovery_ckpt_path = f2.name
+                try:
+                    torch.save({"model": model2.state_dict()}, recovery_ckpt_path)
+                    try:
+                        restored = torch.load(recovery_ckpt_path, weights_only=False)
+                    except TypeError:
+                        restored = torch.load(recovery_ckpt_path)
+                    model2.load_state_dict(restored["model"])
+
+                    opt2 = torch.optim.Adam(model2.parameters(), lr=1e-3)
+                    opt2.zero_grad()
+                    recovery_loss = F.cross_entropy(model2(self._x), self._y)
+                    recovery_loss.backward()
+                    opt2.step()
+                    recovery_success = math.isfinite(recovery_loss.item())
+                finally:
+                    try:
+                        os.unlink(recovery_ckpt_path)
+                    except OSError:
+                        pass
 
         finally:
             try:
@@ -557,10 +599,13 @@ class RealTrainingFailureBenchmark:
         recovery_success = False
         fail_step = self.inject_at_epoch  # treat epoch as step here
 
+        class _SimulatedDataloaderCrash(RuntimeError):
+            """Raised only by this benchmark's injected failure."""
+
         for step in range(self.n_epochs):
             try:
                 if step == fail_step:
-                    raise RuntimeError("Simulated dataloader worker crash")
+                    raise _SimulatedDataloaderCrash("Simulated dataloader worker crash")
 
                 optimizer.zero_grad()
                 loss = F.cross_entropy(model(self._x), self._y)
@@ -570,7 +615,7 @@ class RealTrainingFailureBenchmark:
                 arc.on_batch_end(loss.item())
                 arc.on_epoch_end(step)
 
-            except RuntimeError as exc:
+            except _SimulatedDataloaderCrash:
                 detected = True
                 # recovery: skip the bad batch and continue
                 losses.append(float("nan"))
@@ -592,7 +637,7 @@ class RealTrainingFailureBenchmark:
             details={
                 "fail_step": fail_step,
                 "total_steps": self.n_epochs,
-                "losses_after_recovery": [l for l in losses if math.isfinite(l)][-3:],
+                "losses_after_recovery": [v for v in losses if math.isfinite(v)][-3:],
             },
         )
 
@@ -618,7 +663,7 @@ class RealTrainingFailureBenchmark:
 
         losses = result["losses"]
         # any NaN/Inf in a healthy run = false alarm
-        false_alarms = sum(1 for l in losses if not math.isfinite(l))
+        false_alarms = sum(1 for v in losses if not math.isfinite(v))
         fpr = false_alarms / max(len(losses), 1)
         overhead = self._measure_overhead(model)
 
@@ -630,6 +675,7 @@ class RealTrainingFailureBenchmark:
             false_positive_rate=fpr,
             overhead_percent=overhead,
             runtime_seconds=time.time() - t0,
+            expect_failure=False,
             details={
                 "false_alarms": false_alarms,
                 "total_epochs": len(losses),
@@ -644,27 +690,33 @@ class RealTrainingFailureBenchmark:
     def _measure_overhead(self, model: nn.Module) -> float:
         """
         Compare wall-clock time for n_steps with vs without ARC attached.
-        Returns overhead as a percentage.
+        Uses independent deep copies of `model` for each timing pass so
+        overhead reflects ARC's cost, not drift/corruption from whatever
+        scenario `model` came from. Returns overhead as a percentage.
         """
         n_steps = 30
         x, y = _make_data(n=64)
-        opt_base = torch.optim.Adam(model.parameters(), lr=1e-4)
+
+        baseline_model = copy.deepcopy(model)
+        opt_base = torch.optim.Adam(baseline_model.parameters(), lr=1e-4)
 
         t0 = time.time()
         for _ in range(n_steps):
             opt_base.zero_grad()
-            F.cross_entropy(model(x), y).backward()
+            F.cross_entropy(baseline_model(x), y).backward()
             opt_base.step()
         baseline = time.time() - t0
 
+        arc_model = copy.deepcopy(model)
+        opt_arc = torch.optim.Adam(arc_model.parameters(), lr=1e-4)
         arc = Arc(config=self.config, verbose=False)
-        arc.attach(model, opt_base)
+        arc.attach(arc_model, opt_arc)
         t0 = time.time()
         for step in range(n_steps):
-            opt_base.zero_grad()
-            loss = F.cross_entropy(model(x), y)
+            opt_arc.zero_grad()
+            loss = F.cross_entropy(arc_model(x), y)
             loss.backward()
-            opt_base.step()
+            opt_arc.step()
             arc.on_batch_end(loss.item())
             if step % 5 == 0:
                 arc.on_epoch_end(step // 5)
