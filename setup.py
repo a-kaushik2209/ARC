@@ -43,6 +43,7 @@ setup(
     install_requires=[
         "torch>=1.9.0",
         "numpy>=1.19.0",
+        "scipy>=1.7.0",
     ],
     extras_require={
         "dev": [
