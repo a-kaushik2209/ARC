@@ -74,6 +74,19 @@ def _make_data(n: int = 256, seed: int = 0) -> Tuple[torch.Tensor, torch.Tensor]
     return x, y
 
 
+def _cpu_fp16_autocast_supported() -> bool:
+    """
+    CPU float16 autocast was only added in PyTorch 2.5.0. On earlier
+    versions ``torch.cpu.amp.autocast(dtype=torch.float16)`` silently
+    falls back to fp32 (with a warning), so fp16-overflow scenarios
+    would not actually exercise fp16 range limits.
+    """
+    version_str = torch.__version__.split("+")[0]
+    parts = version_str.split(".")[:2]
+    major, minor = int(parts[0]), int(parts[1])
+    return (major, minor) >= (2, 5)
+
+
 # ---------------------------------------------------------------------------
 # Result dataclass (mirrors BenchmarkResult from benchmark.py)
 # ---------------------------------------------------------------------------
@@ -411,6 +424,27 @@ class RealTrainingFailureBenchmark:
         overflows fp16 range (>65504), producing Inf/NaN loss values.
         """
         t0 = time.time()
+
+        if not _cpu_fp16_autocast_supported():
+            return RealTrainingBenchmarkResult(
+                name="fp16 Overflow",
+                failure_detected=False,
+                detection_latency_epochs=None,
+                recovery_success=False,
+                false_positive_rate=0.0,
+                overhead_percent=0.0,
+                runtime_seconds=time.time() - t0,
+                expect_failure=False,
+                details={
+                    "skipped": True,
+                    "reason": (
+                        f"CPU fp16 autocast requires torch>=2.5.0, "
+                        f"found {torch.__version__}. Scenario skipped to "
+                        f"avoid a false result from silent fp32 fallback."
+                    ),
+                },
+            )
+
         model = _make_model()
         optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
         arc = Arc(config=self.config, verbose=False)
