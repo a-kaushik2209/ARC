@@ -86,6 +86,13 @@ class AdaptiveCheckpointer:
         self.optimizer = optimizer
         self.config = config or AdaptiveCheckpointConfig()
 
+        # Initialize device from model parameters with CPU fallback
+        try:
+            self.device = next(self.model.parameters()).device
+        except StopIteration:
+            # Model has no parameters, fallback to CPU
+            self.device = torch.device('cpu')
+
         self.checkpoints: deque = deque(maxlen=self.config.max_checkpoints)
         self.metadata: List[CheckpointMetadata] = []
 
@@ -425,7 +432,7 @@ class AdaptiveCheckpointer:
 
         if 'model' in checkpoint:
             model_state = checkpoint['model']
-            device = next(self.model.parameters()).device
+            device = self.device
             restored_state = {}
             for k, v in model_state.items():
                 if isinstance(v, torch.Tensor):
@@ -436,7 +443,7 @@ class AdaptiveCheckpointer:
 
         if 'optimizer' in checkpoint and checkpoint['optimizer']:
             if isinstance(list(checkpoint['optimizer'].values())[0] if checkpoint['optimizer'] else None, dict):
-                device = next(self.model.parameters()).device
+                device = self.device
                 for k, v in checkpoint['optimizer'].items():
                     if k in self.optimizer.state:
                         for k2, v2 in v.items():

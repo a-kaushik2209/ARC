@@ -18,8 +18,16 @@
 
 from typing import Dict, Any, Optional, List, Tuple
 import numpy as np
-from scipy import stats
-from scipy.fft import fft
+
+
+_SCIPY_INSTALL_HELP = "pip install arc-training[full]"
+
+
+def _raise_missing_scipy(feature_name: str, exc: ImportError) -> None:
+    raise ImportError(
+        f"SciPy is required for {feature_name} features. "
+        f"Install optional dependencies with: {_SCIPY_INSTALL_HELP}"
+    ) from exc
 
 class FeatureExtractor:
     def __init__(
@@ -171,6 +179,11 @@ class FeatureExtractor:
             return features
 
         try:
+            from scipy.fft import fft
+        except ImportError as e:
+            _raise_missing_scipy("spectral", e)
+
+        try:
             centered = window - np.mean(window)
 
             fft_vals = fft(centered)
@@ -217,6 +230,10 @@ class FeatureExtractor:
 
         if n >= 4:
             try:
+                from scipy import stats
+            except ImportError as e:
+                _raise_missing_scipy("anomaly", e)
+            try:
                 features[f"{signal_name}_skewness"] = stats.skew(window)
                 features[f"{signal_name}_kurtosis"] = stats.kurtosis(window)
             except Exception:
@@ -235,6 +252,8 @@ class FeatureExtractor:
     ) -> Dict[str, float]:
         features = {}
 
+        pearsonr = None
+
         for signal_a, signal_b in self.correlation_pairs:
             if signal_a not in signal_histories or signal_b not in signal_histories:
                 continue
@@ -249,8 +268,15 @@ class FeatureExtractor:
             hist_a = hist_a[-min_len:]
             hist_b = hist_b[-min_len:]
 
+            if pearsonr is None:
+                try:
+                    from scipy.stats import pearsonr as _pearsonr
+                except ImportError as e:
+                    _raise_missing_scipy("correlation", e)
+                pearsonr = _pearsonr
+
             try:
-                corr, pvalue = stats.pearsonr(hist_a, hist_b)
+                corr, pvalue = pearsonr(hist_a, hist_b)
 
                 safe_name = f"{signal_a.split('.')[-1]}_{signal_b.split('.')[-1]}"
                 features[f"corr_{safe_name}"] = corr
